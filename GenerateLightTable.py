@@ -43,7 +43,7 @@ MAX_PHOTONS_PER_EVT = 1000000
 det_name = "NEXT_NEW"
 
 # Type of Light Table: S1 or S2
-table_type = "S1"
+table_type = "S2"
 
 # Detector Type (it will be PmtR11) for most of the geometries
 # but it could be "FIBER_SENSOR" for the flexible geometry
@@ -77,6 +77,16 @@ if VERBOSITY:
 
 
 
+### Getting Table positions
+table_positions = get_table_positions(det_name, table_type, pitch)
+
+# Vervosity
+if VERBOSITY:
+    print(f"* {det_name} - {table_type} table : {len(table_positions)} points.")
+    #print(table_positions)
+
+
+
 ### Getting PATHS
 config_path, log_path, dst_path, table_path = get_working_paths(det_name)
 
@@ -86,16 +96,6 @@ if VERBOSITY:
     print(f"* Log    PATH: {log_path}")
     print(f"* Dst    PATH: {dst_path}")
     print(f"* Table  PATH: {table_path}")
-
-
-
-### Getting Table positions
-table_positions = get_table_positions(det_name, table_type, pitch)
-
-# Vervosity
-if VERBOSITY:
-    print(f"* {det_name} - {table_type} table : {len(table_positions)} points.")
-    #print(table_positions)
 
 
 
@@ -202,7 +202,12 @@ if GENERATE_TABLE:
                               columns = light_table_columns)
     
     # Formatting indices & columns
-    light_table.set_index(['x', 'y', 'z'], inplace = True)
+    if(table_type == 'S1'):
+        light_table.set_index(['x', 'y', 'z'], inplace = True)
+    else:
+        light_table.drop(columns='z', inplace = True)
+        light_table.set_index(['x', 'y'], inplace = True)
+
     light_table.sort_index() # Not sure if needed to speed access
     light_table = light_table.rename(columns = lambda name: sns_type + '_' + name)
     
