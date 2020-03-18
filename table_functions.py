@@ -95,16 +95,16 @@ def get_working_paths(det_name : str
 
     # Setting base PATH
     if host == "local":
-        base_path = f"/Users/Javi/Development/LightTable/data/{det_name}/"
+        base_path = f"/Users/Javi/Development/NextLightTable/data/{det_name}/"
 
     elif host == "majorana":
-        base_path = f"/home/jmunoz/Development/LightTable/data/{det_name}/"
+        base_path = f"/home/jmunoz/Development/NextLightTable/data/{det_name}/"
 
     elif host == "neutrinos":
-        base_path = f"./LightTable/data/{det_name}/"
+        base_path = f"./NextLightTable/data/{det_name}/"
 
     elif host == "harvard":
-        base_path = f"/n/holylfs02/LABS/guenette_lab/users/jmunozv/Development/LightTable/data/{det_name}/"
+        base_path = f"/n/holylfs02/LABS/guenette_lab/users/jmunozv/Development/NextLightTable/data/{det_name}/"
 
     else:
         print("get_working_paths::Not valid host name.")
