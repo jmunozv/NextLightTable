@@ -22,13 +22,13 @@ def get_detector_dimensions(det_name : str
         },
 
         'NEXT100': {
-            'ACTIVE_radius' :  500.0 * units.mm,
+            'ACTIVE_radius' :  496.0 * units.mm,
             'ACTIVE_length' : 1160.0 * units.mm
         },
 
         'NEXT_FLEX': {
-            'ACTIVE_radius' : 534.5 * units.mm,
-            'ACTIVE_length' : 1300.0 * units.mm
+            'ACTIVE_radius' :  496.0 * units.mm,
+            'ACTIVE_length' : 1160.0 * units.mm
         }
     }
     

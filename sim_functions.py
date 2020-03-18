@@ -72,6 +72,8 @@ def get_geometry_config(det_name : str) -> str :
 /Geometry/NextNew/pressure            10. bar
 /Geometry/NextNew/elfield             false
 /Geometry/PmtR11410/SD_depth          4
+/Geometry/PmtR11410/time_binning      10. ms
+/Geometry/SiPMSensl/time_binning      10. ms
 
 /Geometry/Next100/shielding_vis       false
 /Geometry/NextNew/table_vis           false
@@ -89,10 +91,12 @@ def get_geometry_config(det_name : str) -> str :
     ## "NEXT100"
     elif (det_name == "NEXT100"):
         content += '''
-/Geometry/Next100/pressure      15. bar
-/Geometry/Next100/max_step_size 5. mm
-/Geometry/Next100/elfield       false
-/Geometry/PmtR11410/SD_depth    3
+/Geometry/Next100/pressure           15. bar
+/Geometry/Next100/max_step_size       1. mm
+/Geometry/Next100/elfield            false
+/Geometry/PmtR11410/SD_depth         3
+/Geometry/PmtR11410/time_binning     10. ms
+/Geometry/SiPMSensl/time_binning     10. ms
 
 /Geometry/Next100/shielding_vis      false
 /Geometry/Next100/vessel_vis         false
@@ -113,12 +117,12 @@ def get_geometry_config(det_name : str) -> str :
 /Geometry/NextFlex/gas_temperature  300. kelvin
 
 # ACTIVE
-/Geometry/NextFlex/active_length      130. cm
+/Geometry/NextFlex/active_length      116. cm
 /Geometry/NextFlex/drift_transv_diff  1. mm/sqrt(cm)
 /Geometry/NextFlex/drift_long_diff    .3 mm/sqrt(cm)
 
 # FIELD CAGE
-/Geometry/NextFlex/buffer_length    277. mm
+/Geometry/NextFlex/buffer_length    280. mm
 
 /Geometry/NextFlex/el_gap_length    10.  mm
 /Geometry/NextFlex/el_field_on      false
