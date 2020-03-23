@@ -37,13 +37,13 @@ def make_init_file(det_name     : str,
 
 ### PHYSICS
 /PhysicsList/RegisterPhysics G4EmStandardPhysics_option4
-/PhysicsList/RegisterPhysics G4EmExtraPhysics
+#/PhysicsList/RegisterPhysics G4EmExtraPhysics
 /PhysicsList/RegisterPhysics G4DecayPhysics
 /PhysicsList/RegisterPhysics G4RadioactiveDecayPhysics
-/PhysicsList/RegisterPhysics G4HadronElasticPhysicsHP
-/PhysicsList/RegisterPhysics G4HadronPhysicsQGSP_BERT_HP
-/PhysicsList/RegisterPhysics G4StoppingPhysics
-/PhysicsList/RegisterPhysics G4IonPhysics
+#/PhysicsList/RegisterPhysics G4HadronElasticPhysicsHP
+#/PhysicsList/RegisterPhysics G4HadronPhysicsQGSP_BERT_HP
+#/PhysicsList/RegisterPhysics G4StoppingPhysics
+#/PhysicsList/RegisterPhysics G4IonPhysics
 /PhysicsList/RegisterPhysics G4OpticalPhysics
 /PhysicsList/RegisterPhysics NexusPhysics
 /PhysicsList/RegisterPhysics G4StepLimiterPhysics
@@ -70,7 +70,11 @@ def get_geometry_config(det_name : str) -> str :
     if (det_name == "NEXT_NEW"):
         content += '''
 /Geometry/NextNew/pressure            10. bar
+/Geometry/NextNew/sc_yield            25510. 1/MeV
 /Geometry/NextNew/elfield             false
+/Geometry/NextNew/EL_field            13.17 kV/cm
+/Geometry/KDB/teflon_masks            true
+
 /Geometry/PmtR11410/SD_depth          4
 /Geometry/PmtR11410/time_binning      10. ms
 /Geometry/SiPMSensl/time_binning      10. ms
@@ -92,8 +96,9 @@ def get_geometry_config(det_name : str) -> str :
     elif (det_name == "NEXT100"):
         content += '''
 /Geometry/Next100/pressure           15. bar
-/Geometry/Next100/max_step_size       1. mm
+/Geometry/Next100/max_step_size      1.  mm
 /Geometry/Next100/elfield            false
+/Geometry/Next100/EL_field           16. kilovolt/cm
 /Geometry/PmtR11410/SD_depth         3
 /Geometry/PmtR11410/time_binning     10. ms
 /Geometry/SiPMSensl/time_binning     10. ms
@@ -114,7 +119,7 @@ def get_geometry_config(det_name : str) -> str :
 # GAS SETTING
 /Geometry/NextFlex/gas              enrichedXe
 /Geometry/NextFlex/gas_pressure     15. bar
-/Geometry/NextFlex/gas_temperature  300. kelvin
+/Geometry/NextFlex/gas_temperature  303. kelvin
 
 # ACTIVE
 /Geometry/NextFlex/active_length      116. cm
@@ -149,13 +154,13 @@ def get_geometry_config(det_name : str) -> str :
 /Geometry/PmtR11410/time_binning        10. ms
 
 # TRACKING PLANE
-/Geometry/NextFlex/tp_copper_thickness   12. cm
+/Geometry/NextFlex/tp_copper_thickness   12.  cm
 /Geometry/NextFlex/tp_wls_mat            TPB
-/Geometry/NextFlex/tp_sipm_anode_dist    10. mm
-/Geometry/NextFlex/tp_sipm_size          1.  mm
-/Geometry/NextFlex/tp_sipm_pitchX        15. mm
-/Geometry/NextFlex/tp_sipm_pitchY        15. mm
-/Geometry/NextFlex/tp_sipm_time_binning  10. ms
+/Geometry/NextFlex/tp_sipm_anode_dist    15.  mm
+/Geometry/NextFlex/tp_sipm_size          1.   mm
+/Geometry/NextFlex/tp_sipm_pitchX        15.6 mm
+/Geometry/NextFlex/tp_sipm_pitchY        15.6 mm
+/Geometry/NextFlex/tp_sipm_time_binning  10.  ms
 
 # ICS
 /Geometry/NextFlex/ics_thickness  12. cm
