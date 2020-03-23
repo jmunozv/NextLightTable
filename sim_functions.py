@@ -96,21 +96,24 @@ def get_geometry_config(det_name : str) -> str :
     elif (det_name == "NEXT100"):
         content += '''
 /Geometry/Next100/pressure           15. bar
+/Geometry/Next100/sc_yield           25510. 1/MeV
 /Geometry/Next100/max_step_size      1.  mm
 /Geometry/Next100/elfield            false
 /Geometry/Next100/EL_field           16. kilovolt/cm
-/Geometry/PmtR11410/SD_depth         3
-/Geometry/PmtR11410/time_binning     10. ms
-/Geometry/SiPMSensl/time_binning     10. ms
 
-/Geometry/Next100/shielding_vis      false
-/Geometry/Next100/vessel_vis         false
-/Geometry/Next100/ics_vis            false
-/Geometry/Next100/field_cage_vis     false
-/Geometry/Next100/grids_vis          false
-/Geometry/Next100/energy_plane_vis   false
-/Geometry/Next100/tracking_plane_vis false
-/Geometry/SiPMSensl/visibility       false
+/Geometry/PmtR11410/SD_depth               3
+/Geometry/PmtR11410/time_binning           10. ms
+/Geometry/GenericPhotosensor/time_binning  10. ms
+
+/Geometry/Next100/shielding_vis          false
+/Geometry/Next100/vessel_vis             false
+/Geometry/Next100/ics_vis                false
+/Geometry/Next100/field_cage_vis         false
+/Geometry/Next100/grids_vis              false
+/Geometry/Next100/energy_plane_vis       false
+/Geometry/Next100/tracking_plane_vis     false
+/Geometry/GenericPhotosensor/visibility  false
+/Geometry/PmtR11410/visibility           false
         '''
     
     ## "NextFlex"
