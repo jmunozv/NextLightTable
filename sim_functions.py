@@ -72,8 +72,7 @@ def get_geometry_config(det_name : str) -> str :
 /Geometry/NextNew/pressure            10. bar
 /Geometry/NextNew/sc_yield            25510. 1/MeV
 /Geometry/NextNew/elfield             false
-/Geometry/NextNew/EL_field            13.17 kV/cm
-/Geometry/KDB/teflon_masks            true
+/Geometry/NextNew/EL_field            12.83 kV/cm
 
 /Geometry/PmtR11410/SD_depth          4
 /Geometry/PmtR11410/time_binning      10. ms
@@ -95,15 +94,15 @@ def get_geometry_config(det_name : str) -> str :
     ## "NEXT100"
     elif (det_name == "NEXT100"):
         content += '''
-/Geometry/Next100/pressure           15. bar
-/Geometry/Next100/sc_yield           25510. 1/MeV
-/Geometry/Next100/max_step_size      1.  mm
-/Geometry/Next100/elfield            false
-/Geometry/Next100/EL_field           16. kilovolt/cm
+/Geometry/Next100/pressure        15. bar
+/Geometry/Next100/sc_yield        25510. 1/MeV
+/Geometry/Next100/max_step_size   1.  mm
+/Geometry/Next100/elfield         false
+/Geometry/Next100/EL_field        16. kilovolt/cm
 
-/Geometry/PmtR11410/SD_depth               3
-/Geometry/PmtR11410/time_binning           10. ms
-/Geometry/GenericPhotosensor/time_binning  10. ms
+/Geometry/PmtR11410/SD_depth      3
+/Geometry/PmtR11410/time_binning  10. ms
+/Geometry/SiPM/time_binning       10. ms
 
 /Geometry/Next100/shielding_vis          false
 /Geometry/Next100/vessel_vis             false
@@ -123,6 +122,7 @@ def get_geometry_config(det_name : str) -> str :
 /Geometry/NextFlex/gas              enrichedXe
 /Geometry/NextFlex/gas_pressure     15. bar
 /Geometry/NextFlex/gas_temperature  303. kelvin
+/Geometry/NextFlex/e_lifetime       1000. ms
 
 # ACTIVE
 /Geometry/NextFlex/active_length      116. cm
@@ -131,6 +131,10 @@ def get_geometry_config(det_name : str) -> str :
 
 # FIELD CAGE
 /Geometry/NextFlex/buffer_length    280. mm
+
+/Geometry/NextFlex/cathode_transparency .98
+/Geometry/NextFlex/anode_transparency   .88
+/Geometry/NextFlex/gate_transparency    .88
 
 /Geometry/NextFlex/el_gap_length    10.  mm
 /Geometry/NextFlex/el_field_on      false
@@ -158,9 +162,12 @@ def get_geometry_config(det_name : str) -> str :
 
 # TRACKING PLANE
 /Geometry/NextFlex/tp_copper_thickness   12.  cm
+/Geometry/NextFlex/tp_teflon_thickness    5.  mm
+/Geometry/NextFlex/tp_teflon_hole_diam    7.  mm
 /Geometry/NextFlex/tp_wls_mat            TPB
 /Geometry/NextFlex/tp_sipm_anode_dist    15.  mm
-/Geometry/NextFlex/tp_sipm_size          1.   mm
+/Geometry/NextFlex/tp_sipm_sizeX         1.   mm
+/Geometry/NextFlex/tp_sipm_sizeY         1.   mm
 /Geometry/NextFlex/tp_sipm_pitchX        15.6 mm
 /Geometry/NextFlex/tp_sipm_pitchY        15.6 mm
 /Geometry/NextFlex/tp_sipm_time_binning  10.  ms
@@ -303,7 +310,7 @@ def make_harvard_script(script_fname : str,
 #SBATCH -N 1               # Ensure that all cores are on one machine
 #SBATCH -t 150             # Runtime in minutes
 #SBATCH -p guenette        # Partition to submit to
-#SBATCH --mem=2000        # Memory per cpu in MB (see also –mem-per-cpu)
+#SBATCH --mem=2000         # Memory per cpu in MB (see also –mem-per-cpu)
 #SBATCH -o tmp/%j.out      # Standard out goes to this file
 #SBATCH -e tmp/%j.err      # Standard err goes to this filehostname
 
@@ -351,7 +358,7 @@ def run_sim(init_fname : str,
     ## Runing in HARVARD queue system
     elif host == "harvard":
         script_fname = "sim.slurm"
-        exe_path = "/n/holylfs02/LABS/guenette_lab/users/jmunozv/Development/nexus/bin/"
+        exe_path = "/n/holystore01/LABS/guenette_lab/Users/jmunozv/Development/nexus/bin/"
         make_harvard_script(script_fname, exe_path, init_fname, log_fname, num_evts)
         
         os.system(f"sbatch {script_fname}")

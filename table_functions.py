@@ -22,7 +22,7 @@ def get_detector_dimensions(det_name : str
         },
 
         'NEXT100': {
-            'ACTIVE_radius' :  496.0 * units.mm,
+            'ACTIVE_radius' :  492.0 * units.mm,
             'ACTIVE_length' : 1160.0 * units.mm
         },
 
@@ -104,7 +104,7 @@ def get_working_paths(det_name : str
         base_path = f"./NextLightTable/data/{det_name}/"
 
     elif host == "harvard":
-        base_path = f"/n/holylfs02/LABS/guenette_lab/users/jmunozv/Development/NextLightTable/data/{det_name}/"
+        base_path = f"/n/holystore01/LABS/guenette_lab/Users/jmunozv/Development/NextLightTable/data/{det_name}/"
 
     else:
         print("get_working_paths::Not valid host name.")
