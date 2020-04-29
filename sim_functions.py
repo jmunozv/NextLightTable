@@ -7,13 +7,8 @@ import pandas as pd
 from datetime import datetime
 
 # Specific LightTable stuff
-from table_functions import get_host_name
-
-
-###
-def get_seed() -> int :
-    dt = datetime.now()
-    return dt.microsecond
+from general_functions import get_host_name
+from general_functions import get_seed
 
 
 
@@ -249,13 +244,7 @@ def make_config_file(det_name     : str,
 
 
 
-#def get_num_photons(dst_fname):
-#    mcConfig = pd.read_hdf(dst_fname, 'MC/configuration')
-#    mcConfig.set_index("param_key", inplace = True)
-#    num_photons_event = int(mcConfig.at["/Generator/ScintGenerator/nphotons" , "param_value"])
-#    num_events        = int(mcConfig.at["num_events" , "param_value"])
-#    return num_events * num_photons_event
-
+###
 def get_num_photons(dst_fname):
     mcConfig = pd.read_hdf(dst_fname, 'MC/configuration')
     mcConfig.set_index("param_key", inplace = True)
