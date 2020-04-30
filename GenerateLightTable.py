@@ -26,6 +26,7 @@ from table_functions     import get_working_paths
 from table_functions     import build_table
 from table_functions     import get_fnames
 from table_functions     import get_table_fname
+from table_functions     import get_detector_dimensions
 
 
 
@@ -144,6 +145,7 @@ if RUN_SIMULATIONS:
 
 if GENERATE_TABLE:
 
+    dimensions = get_detector_dimensions(det_name)
     light_table_fname = table_path + get_table_fname(det_name, table_type,
                                                      signal_type, sensor_name)
     
@@ -156,21 +158,25 @@ if GENERATE_TABLE:
     # Config Table
     config_columns =  ['parameter', 'value']
 
-    config_data    = [['detector' ,         det_name],
-                      ['table_type',        table_type],
-                      ['signal_type',       signal_type],
-                      ['sensor',            sensor_name],
-                      ['pitch_x',           str(pitch[0])],
-                      ['pitch_y',           str(pitch[1])],
-                      ['pitch_z',           str(pitch[2])],
-                      ['photons_per_point', str(photons_per_point)],
-                      ['photons_per_event', str(photons_per_event)],
-                      ['events_per_point',  str(events_per_point)],
-                      ['total_points',      str(len(table_positions))],
-                      ['table_path',        table_path],
-                      ['dst_path',          dst_path],
-                      ['config_path',       config_path],
-                      ['log_path',          log_path]]
+    config_data    = [['detector' ,            det_name],
+                      ['ACTIVE_rad',           str(dimensions['ACTIVE_radius'])],
+                      ['ACTIVE_length',        str(dimensions['ACTIVE_length'])],
+                      ['EL_GAP',               str(dimensions['EL_gap'])],
+                      ['reference_sensor_id',  str(dimensions['ref_sensor'][0])],
+                      ['table_type',           table_type],
+                      ['signal_type',          signal_type],
+                      ['sensor',               sensor_name],
+                      ['pitch_x',              str(pitch[0])],
+                      ['pitch_y',              str(pitch[1])],
+                      ['pitch_z',              str(pitch[2])],
+                      ['photons_per_point',    str(photons_per_point)],
+                      ['photons_per_event',    str(photons_per_event)],
+                      ['events_per_point',     str(events_per_point)],
+                      ['total_points',         str(len(table_positions))],
+                      ['table_path',           table_path],
+                      ['dst_path',             dst_path],
+                      ['config_path',          config_path],
+                      ['log_path',             log_path]]
 
     config_table = pd.DataFrame(config_data, columns = config_columns)
     config_table.set_index("parameter", inplace = True)
