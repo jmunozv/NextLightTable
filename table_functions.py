@@ -291,7 +291,6 @@ def build_tracking_table(det_name, signal_type, sensor_name, pitch):
     dist_xys.sort()
     zs      .sort(reverse=True)
     
-    #light_table_columns = ['dist_xy'] + ['z_m' + str(-z) for z in zs]
     light_table_columns = ['dist_xy'] + ['z_m' + str(int(-z)) for z in zs]
     light_table_probs   = np.zeros((len(dist_xys), len(zs)))
 

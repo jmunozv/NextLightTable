@@ -16,22 +16,22 @@ from invisible_cities.io.mcinfo_io        import load_mcsensor_response_df
 from invisible_cities.io.mcinfo_io        import get_sensor_types
 
 # Light Table stuff
-from sim_functions       import make_init_file
-from sim_functions       import make_config_file
-from sim_functions       import run_sim
-from sim_functions       import get_num_photons
+from sim_functions    import make_init_file
+from sim_functions    import make_config_file
+from sim_functions    import run_sim
+from sim_functions    import get_num_photons
 
-from table_functions     import get_table_positions
-from table_functions     import get_working_paths
-from table_functions     import build_table
-from table_functions     import get_fnames
-from table_functions     import get_table_fname
-from table_functions     import get_detector_dimensions
+from table_functions  import get_table_positions
+from table_functions  import get_working_paths
+from table_functions  import build_table
+from table_functions  import get_fnames
+from table_functions  import get_table_fname
+from table_functions  import get_detector_dimensions
 
 
 
-RUN_SIMULATIONS = False
-GENERATE_TABLE  = True
+RUN_SIMULATIONS = True
+GENERATE_TABLE  = False
 
 ########## SETTINGS ##########
 
@@ -64,12 +64,12 @@ sensor_name = "SiPM"
 ### Table pitch
 #pitch = (200.0 * units.mm, 200.0 * units.mm, 200.0 * units.mm)
 #pitch = (20.0 * units.mm, 20.0 * units.mm, 40.0 * units.mm)
-pitch = (30.0 * units.mm, 30.0 * units.mm, 1.0 * units.mm)
+pitch = (20.0 * units.mm, 20.0 * units.mm, 1.0 * units.mm)
 #pitch = (1.0 * units.mm, 1.0 * units.mm, 1.0 * units.mm)
 
 
 ### Table num photons / point
-photons_per_point = 1000000
+photons_per_point = 1000
 
 
 ### Getting (photons / point) & (events / point) & (photons / event)
