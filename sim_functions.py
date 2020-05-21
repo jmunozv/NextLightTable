@@ -17,40 +17,17 @@ def make_init_file(det_name     : str,
                    init_fname   : str,
                    config_fname : str
                   )            -> None :
+    # This contains a dictionary with all local vars, at this point only function parameters
+    params = locals()
 
-    # GEOMETRY
-    content  = f"/Geometry/RegisterGeometry {det_name}\n"
+    template_file = 'templates/init.mac' # Relative path!
+    template      = open(template_file).read()
 
-    # GENERATOR
-    content += f"/Generator/RegisterGenerator    SCINTGENERATOR\n"
+    content  = template.format(**params)
 
-    # ACTIONS
-    content += f"/Actions/RegisterRunAction      DEFAULT\n"
-    content += f"/Actions/RegisterEventAction    EL_SIM\n"
-    content += f"/Actions/RegisterTrackingAction DEFAULT\n"
-    content += f"/Actions/RegisterSteppingAction ANALYSIS\n"
-
-    # PHYSICS
-    content += f"/PhysicsList/RegisterPhysics G4EmStandardPhysics_option4\n"
-    content += f"#/PhysicsList/RegisterPhysics G4EmExtraPhysics\n"
-    content += f"/PhysicsList/RegisterPhysics G4DecayPhysics\n"
-    content += f"/PhysicsList/RegisterPhysics G4RadioactiveDecayPhysics\n"
-    content += f"#/PhysicsList/RegisterPhysics G4HadronElasticPhysicsHP\n"
-    content += f"#/PhysicsList/RegisterPhysics G4HadronPhysicsQGSP_BERT_HP\n"
-    content += f"#/PhysicsList/RegisterPhysics G4StoppingPhysics\n"
-    content += f"#/PhysicsList/RegisterPhysics G4IonPhysics\n"
-    content += f"/PhysicsList/RegisterPhysics G4OpticalPhysics\n"
-    content += f"/PhysicsList/RegisterPhysics NexusPhysics\n"
-    content += f"/PhysicsList/RegisterPhysics G4StepLimiterPhysics\n"
-
-    # EXTRA CONFIGURATION
-    content += f"/nexus/RegisterMacro {config_fname}\n"
-    
-    #print(content)
     init_file = open(init_fname, 'w')
     init_file.write(content)
     init_file.close()
-
 
 
 ###
