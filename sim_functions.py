@@ -4,8 +4,6 @@ import subprocess
 
 import pandas as pd
 
-from datetime import datetime
-
 # Specific LightTable stuff
 from general_functions import get_host_name
 from general_functions import get_seed
@@ -18,161 +16,18 @@ def make_init_file(det_name     : str,
                    config_fname : str
                   )            -> None :
 
-    # GEOMETRY
-    content  = f"/Geometry/RegisterGeometry {det_name}\n"
+    if (det_name == "NEXT100"): det_name += "_OPT" # XXX To be deleted asap
+    params = locals()
 
-    # GENERATOR
-    content += f"/Generator/RegisterGenerator    SCINTGENERATOR\n"
+    # Getting & formatting the template
+    template_file = 'templates/init.mac'
+    template      = open(template_file).read()
+    content       = template.format(**params)
 
-    # ACTIONS
-    content += f"/Actions/RegisterRunAction      DEFAULT\n"
-    content += f"/Actions/RegisterEventAction    EL_SIM\n"
-    content += f"/Actions/RegisterTrackingAction DEFAULT\n"
-    content += f"/Actions/RegisterSteppingAction ANALYSIS\n"
-
-    # PHYSICS
-    content += f"/PhysicsList/RegisterPhysics G4EmStandardPhysics_option4\n"
-    content += f"#/PhysicsList/RegisterPhysics G4EmExtraPhysics\n"
-    content += f"/PhysicsList/RegisterPhysics G4DecayPhysics\n"
-    content += f"/PhysicsList/RegisterPhysics G4RadioactiveDecayPhysics\n"
-    content += f"#/PhysicsList/RegisterPhysics G4HadronElasticPhysicsHP\n"
-    content += f"#/PhysicsList/RegisterPhysics G4HadronPhysicsQGSP_BERT_HP\n"
-    content += f"#/PhysicsList/RegisterPhysics G4StoppingPhysics\n"
-    content += f"#/PhysicsList/RegisterPhysics G4IonPhysics\n"
-    content += f"/PhysicsList/RegisterPhysics G4OpticalPhysics\n"
-    content += f"/PhysicsList/RegisterPhysics NexusPhysics\n"
-    content += f"/PhysicsList/RegisterPhysics G4StepLimiterPhysics\n"
-
-    # EXTRA CONFIGURATION
-    content += f"/nexus/RegisterMacro {config_fname}\n"
-    
     #print(content)
     init_file = open(init_fname, 'w')
     init_file.write(content)
     init_file.close()
-
-
-
-###
-def get_geometry_config(det_name : str) -> str :
-    
-    valid_geometries = ["NEXT_NEW", "NEXT100", "NEXT_FLEX"]
-    assert det_name in valid_geometries, "Wrong Geometry"
-    
-    content = "### GEOMETRY"
-    
-    ## "NEW"
-    if (det_name == "NEXT_NEW"):
-        content += f"/Geometry/NextNew/pressure            10. bar\n"
-        content += f"/Geometry/NextNew/sc_yield            25510. 1/MeV\n"
-        content += f"/Geometry/NextNew/elfield             false\n"
-        content += f"/Geometry/NextNew/EL_field            12.83 kV/cm\n"
-    
-        content += f"/Geometry/PmtR11410/SD_depth          4\n"
-        content += f"/Geometry/PmtR11410/time_binning      10. ms\n"
-        content += f"/Geometry/SiPMSensl/time_binning      10. ms\n"
-    
-        content += f"/Geometry/Next100/shielding_vis       false\n"
-        content += f"/Geometry/NextNew/table_vis           false\n"
-        content += f"/Geometry/NextNew/ics_vis             false\n"
-        content += f"/Geometry/NextNew/vessel_vis          false\n"
-        content += f"/Geometry/NextNew/energy_plane_vis    false\n"
-        content += f"/Geometry/NextNew/enclosure_vis       false\n"
-        content += f"/Geometry/NextNew/tracking_plane_vis  false\n"
-        content += f"/Geometry/KDB/visibility              false\n"
-        content += f"/Geometry/SiPMSensl/visibility        false\n"
-        content += f"/Geometry/PmtR11410/visibility        false\n"
-        content += f"/Geometry/NextNew/field_cage_vis      false\n"
-
-    ## "NEXT100"
-    elif (det_name == "NEXT100"):
-        content += f"/Geometry/Next100/pressure          15. bar\n"
-        content += f"/Geometry/Next100/sc_yield          25510. 1/MeV\n"
-        content += f"/Geometry/Next100/max_step_size     1.  mm\n"
-        content += f"/Geometry/Next100/elfield           false\n"
-        content += f"/Geometry/Next100/EL_field          16. kilovolt/cm\n"
-        content += f"/Geometry/Next100/sipm_time_binning 10. ms\n"
-    
-        content += f"/Geometry/PmtR11410/SD_depth      3\n"
-        content += f"/Geometry/PmtR11410/time_binning  10. ms\n"
-
-        content += f"/Geometry/Next100/shielding_vis       false\n"
-        content += f"/Geometry/Next100/vessel_vis          false\n"
-        content += f"/Geometry/Next100/ics_vis             false\n"
-        content += f"/Geometry/Next100/field_cage_vis      false\n"
-        content += f"/Geometry/Next100/grids_vis           false\n"
-        content += f"/Geometry/Next100/energy_plane_vis    false\n"
-        content += f"/Geometry/Next100/tracking_plane_vis  false\n"
-        content += f"/Geometry/SiPM/visibility             false\n"
-        content += f"/Geometry/PmtR11410/visibility        false\n"
-
-    ## "NextFlex"
-    elif (det_name == "NEXT_FLEX"):
-        content += f"# GAS SETTING\n"
-        content += f"/Geometry/NextFlex/gas              enrichedXe\n"
-        content += f"/Geometry/NextFlex/gas_pressure     15. bar\n"
-        content += f"/Geometry/NextFlex/gas_temperature  303. kelvin\n"
-        content += f"/Geometry/NextFlex/e_lifetime       1000. ms\n"
-
-        content += f"# ACTIVE\n"
-        content += f"/Geometry/NextFlex/active_length      116. cm\n"
-        content += f"/Geometry/NextFlex/drift_transv_diff  1. mm/sqrt(cm)\n"
-        content += f"/Geometry/NextFlex/drift_long_diff    .3 mm/sqrt(cm)\n"
-
-        content += f"# FIELD CAGE\n"
-        content += f"/Geometry/NextFlex/buffer_length              280. mm\n"
-        content += f"/Geometry/NextFlex/cathode_transparency       .98\n"
-        content += f"/Geometry/NextFlex/anode_transparency         .88\n"
-        content += f"/Geometry/NextFlex/gate_transparency          .88\n"
-        content += f"/Geometry/NextFlex/el_gap_length              10.  mm\n"
-        content += f"/Geometry/NextFlex/el_field_on                false\n"
-        content += f"/Geometry/NextFlex/el_field_int               16. kilovolt/cm\n"
-        content += f"/Geometry/NextFlex/el_transv_diff             0. mm/sqrt(cm)\n"
-        content += f"/Geometry/NextFlex/el_long_diff               0. mm/sqrt(cm)\n"
-        content += f"/Geometry/NextFlex/fc_wls_mat                 TPB\n"
-        content += f"/Geometry/NextFlex/fc_with_fibers             true\n"
-        content += f"/Geometry/NextFlex/fiber_mat                  EJ280\n"
-        content += f"/Geometry/NextFlex/fiber_claddings            2\n"
-        content += f"/Geometry/NextFlex/fiber_sensor_pde           1.\n"
-        content += f"/Geometry/NextFlex/fiber_sensor_time_binning  10. ms\n"
-
-        content += f"# ENERGY PLANE\n"
-        content += f"/Geometry/NextFlex/ep_with_PMTs         true\n"
-        content += f"/Geometry/NextFlex/ep_with_teflon       true\n"
-        content += f"/Geometry/NextFlex/ep_copper_thickness  12. cm\n"
-        content += f"/Geometry/NextFlex/ep_wls_mat           TPB\n"
-        content += f"/Geometry/PmtR11410/SD_depth            3\n"
-        content += f"/Geometry/PmtR11410/time_binning        10. ms\n"
-
-        content += f"# TRACKING PLANE\n"
-        content += f"/Geometry/NextFlex/tp_copper_thickness   12.  cm\n"
-        content += f"/Geometry/NextFlex/tp_teflon_thickness    5.  mm\n"
-        content += f"/Geometry/NextFlex/tp_teflon_hole_diam    7.  mm\n"
-        content += f"/Geometry/NextFlex/tp_wls_mat            TPB\n"
-        content += f"/Geometry/NextFlex/tp_sipm_anode_dist    15.  mm\n"
-        content += f"/Geometry/NextFlex/tp_sipm_sizeX         1.   mm\n"
-        content += f"/Geometry/NextFlex/tp_sipm_sizeY         1.   mm\n"
-        content += f"/Geometry/NextFlex/tp_sipm_pitchX        15.6 mm\n"
-        content += f"/Geometry/NextFlex/tp_sipm_pitchY        15.6 mm\n"
-        content += f"/Geometry/NextFlex/tp_sipm_time_binning  10.  ms\n"
-
-        content += f"# ICS\n"
-        content += f"/Geometry/NextFlex/ics_thickness  12. cm\n"
-
-        content += f"# VERBOSITY\n"
-        content += f"/Geometry/NextFlex/verbosity     true\n"
-        content += f"/Geometry/NextFlex/fc_verbosity  true\n"
-        content += f"/Geometry/NextFlex/ep_verbosity  true\n"
-        content += f"/Geometry/NextFlex/tp_verbosity  true\n"
-
-        content += f"# VISIBILITIES\n"
-        content += f"/Geometry/NextFlex/fc_visibility  false\n"
-        content += f"/Geometry/NextFlex/ep_visibility  false\n"
-        content += f"/Geometry/PmtR11410/visibility    false\n"
-        content += f"/Geometry/NextFlex/tp_visibility  false\n"
-        content += f"/Geometry/NextFlex/ics_visibility false\n"
-    
-    return content
 
 
 
@@ -187,8 +42,16 @@ def make_config_file(det_name     : str,
                     )            -> None :
 
     # Geometry Content
-    geometry_content = get_geometry_config(det_name)
-    
+    if   (det_name == "NEXT_NEW" ): template_file = 'templates/NEXT_NEW.geometry.config'
+    elif (det_name == "NEXT100"  ): template_file = 'templates/NEXT100.geometry.config'
+    elif (det_name == "NEXT_FLEX"): template_file = 'templates/NEXT_FLEX_Ala100.geometry.config'
+    else:
+        print(f"{det_name} is not a valid detector.")
+        sys.exit()
+
+    geometry_content = open(template_file).read()
+
+
     # Detector String for parameters
     if   (det_name == "NEXT_NEW" ): det_str = "NextNew"
     elif (det_name == "NEXT100"  ): det_str = "Next100"
@@ -208,7 +71,6 @@ def make_config_file(det_name     : str,
     content += f"/Generator/ScintGenerator/nphotons    {num_photons}\n"
 
     content += f"### PHYSICS\n"
-    content += f"/process/optical/scintillation/setTrackSecondariesFirst true\n"
     content += f"/PhysicsList/Nexus/clustering           true\n"
     content += f"/PhysicsList/Nexus/drift                true\n"
     content += f"/PhysicsList/Nexus/electroluminescence  true\n"
@@ -311,7 +173,8 @@ def run_sim(init_fname : str,
 
     ## Runing locally
     if host == "local":
-        exe_path = "/Users/Javi/Development/nexus/bin/"
+        #exe_path = "/Users/Javi/Development/nexus/bin/"
+        exe_path = "/Users/Javi/Development/nexus/"
         inst = [exe_path + "nexus", "-b", init_fname, "-n", str(num_evts), ">", log_fname]
         
         #os.system("source /Users/Javi/.profile")

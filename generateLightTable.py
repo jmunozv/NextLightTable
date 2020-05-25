@@ -4,16 +4,12 @@ This SCRIPT generates Light Tables for a given geometry.
 
 # General Importings
 import os
-
-import numpy  as np
 import pandas as pd
 
 from math import ceil
 
 # Specific IC stuff
 import invisible_cities.core.system_of_units  as units
-from invisible_cities.io.mcinfo_io        import load_mcsensor_response_df
-from invisible_cities.io.mcinfo_io        import get_sensor_types
 
 # Light Table stuff
 from sim_functions    import make_init_file
@@ -30,47 +26,57 @@ from table_functions  import get_detector_dimensions
 
 
 
-RUN_SIMULATIONS = True
-GENERATE_TABLE  = False
+#################### GENERALITIES ####################
 
-########## SETTINGS ##########
-
-### Generalities
 # Vervosity
 VERBOSITY = True
 
 # Maximum number of photons per event
 MAX_PHOTONS_PER_EVT = 1000000
 
-
-### Current options: "NEXT_NEW", "NEXT100", "NEXT_FLEX"
-det_name = "NEXT_NEW"
-
-
-### Type of Light Table: energy or tracking
-table_type = "tracking"
+# Valid options
+VALID_DETECTORS    = ["NEXT_NEW", "NEXT100", "NEXT_FLEX"]
+VALID_TABLE_TYPES  = ["energy", "tracking"]
+VALID_SIGNAL_TYPES = ["S1", "S2"]
 
 
-### Signal Type: S1 or S2
-signal_type = "S2"
 
+#################### SETTINGS ####################
 
-### Sensor name.
+RUN_SIMULATIONS = False
+GENERATE_TABLE  = True
+
+# DETECTOR NAME
+det_name = "NEXT_FLEX"
+assert det_name in VALID_DETECTORS, "Wrong Geometry"
+
+# TABLE TYPE
+table_type = "energy"
+assert table_type in VALID_TABLE_TYPES, "Wrong Table Type"
+
+# SIGNAL TYPE
+signal_type = "S1"
+assert signal_type in VALID_SIGNAL_TYPES, "Wrong Signal Type"
+
+# SENSOR NAME
 # Typically PmtR11410 for energy tables and SiPM for tracking ones
-#sensor_name = "PmtR11410"
-sensor_name = "SiPM"
+sensor_name = "PmtR11410"
+#sensor_name = "SiPM"
+#sensor_name = "TP_SiPM"
 
-
-### Table pitch
-#pitch = (200.0 * units.mm, 200.0 * units.mm, 200.0 * units.mm)
-#pitch = (20.0 * units.mm, 20.0 * units.mm, 40.0 * units.mm)
-pitch = (20.0 * units.mm, 20.0 * units.mm, 1.0 * units.mm)
+# TABLE PITCH
+#pitch = (20.0 * units.mm, 20.0 * units.mm, 20.0 * units.mm)
 #pitch = (1.0 * units.mm, 1.0 * units.mm, 1.0 * units.mm)
 
+if((table_type == "tracking") and (pitch[2] > 2.0 * units.mm)):
+    print("\n#### WARNING #### - Pitch Z unusually big.")
 
-### Table num photons / point
-photons_per_point = 1000
+# PHOTONS / POINT
+photons_per_point = 1000000
 
+
+
+#################### PRELIMINARY JOB ####################
 
 ### Getting (photons / point) & (events / point) & (photons / event)
 events_per_point  = 1
@@ -96,7 +102,7 @@ if VERBOSITY:
     print(f"*** Type: {table_type}  -  Signal: {signal_type}  -  Sensor: {sensor_name}")
     print(f"*** Pitch: {pitch} mm")
     print(f"*** Photons/Point = {photons_per_point:.1e} splitted into ...")
-    print(f"*** {events_per_point} Events/Point * {photons_per_event:.1e} Photons/Event")
+    print(f"***    {events_per_point} Events/Point x {photons_per_event:.1e} Photons/Event")
     print(f"*** Total number of points:{len(table_positions)}")
     print(f"*** Config PATH: {config_path}")
     print(f"*** Log    PATH: {log_path}")
@@ -105,7 +111,7 @@ if VERBOSITY:
     
 
 
-########## RUNNING SIMULATIONS ##########
+#################### RUNNING SIMULATIONS ####################
 
 if RUN_SIMULATIONS:
 
@@ -125,7 +131,7 @@ if RUN_SIMULATIONS:
         
         # Runing the simulation
         if VERBOSITY:
-            print(f"* Runing {det_name} sim of {photons_per_point:.1e} photons from {pos} ...")
+            print(f"\n* Runing {det_name} sim of {photons_per_point:.1e} photons from {pos} ...")
         
         # Check if the sim is already run with the correct num_photons
         if os.path.isfile(dst_fname + '.h5'):
@@ -141,7 +147,7 @@ if RUN_SIMULATIONS:
 
 
 
-########## GENERATING LIGHT TABLE ##########
+#################### GENERATING LIGHT TABLE ####################
 
 if GENERATE_TABLE:
 

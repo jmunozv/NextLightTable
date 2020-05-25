@@ -33,17 +33,17 @@ def get_detector_dimensions(det_name : str
         },
 
         'NEXT100': {
-            'ACTIVE_radius' :  492.0 * units.mm,
-            'ACTIVE_length' : 1160.0 * units.mm,
-            'EL_gap'        :  10.0 * units.mm,
-            'ref_sensor'    : (21000, (7.8, 7.8))   # Reference sensor (id, (x,y))
+            'ACTIVE_radius' :  492.0  * units.mm,
+            'ACTIVE_length' : 1204.95 * units.mm,
+            'EL_gap'        :   10.0  * units.mm,
+            'ref_sensor'    : (33000, (7.83, 7.83))   # Reference sensor (id, (x,y))
         },
 
         'NEXT_FLEX': {
-            'ACTIVE_radius' :  492.0 * units.mm,
-            'ACTIVE_length' : 1160.0 * units.mm,
-            'EL_gap'        :  10.0 * units.mm,
-            'ref_sensor'    : (2562, (7.2, 7.2))   # Reference sensor (id, (x,y))
+            'ACTIVE_radius' :  492.0  * units.mm,
+            'ACTIVE_length' : 1204.95 * units.mm,
+            'EL_gap'        :   10.0  * units.mm,
+            'ref_sensor'    : (2564, (5.6, 5.6))   # Reference sensor (id, (x,y))
         }
     }
     
@@ -179,13 +179,13 @@ def get_tracking_table_positions(det_name    : str,
     pitch_y = int(pitch[1])
     pitch_z = int(pitch[2])
     assert (pitch_x == pitch_y), "pitch_x must be equal to pitch_y for tracking tables"
+    assert (pitch_z <= det_el),  "pitch_z must be equal or lower to detector EL GAP"
     
     # Generating positions
     positions = []
-    for dist_xy in range(0, MAX_DIST+pitch_x, pitch_x):
-        for z in range(0, det_el, pitch_z):
-            positions.append((sns_pos_x + dist_xy, sns_pos_y,
-                              -(z + pitch_z/2.)) )
+    for dist_xy in range(0, MAX_DIST, pitch_x):
+        for z in np.arange(pitch_z/2., det_el, pitch_z):
+            positions.append((sns_pos_x + dist_xy, sns_pos_y, -z))
 
     return positions
 
@@ -299,7 +299,7 @@ def build_tracking_table(det_name, signal_type, sensor_name, pitch):
 
         dist = pos[0] - sns_pos_x
         z    = pos[2] - pitch_z/2.
-        print(f"\n* Getting data from {det_name} - Distance: ({dist}, {z}) ...")
+        print(f"\n* Getting data from {det_name} - Distance {dist} mm - Z = {z} mm ...")
     
         # Getting the right DST file name
         _, _, _, dst_fname = get_fnames(det_name ,pos)
