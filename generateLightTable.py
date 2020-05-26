@@ -14,7 +14,7 @@ import invisible_cities.core.system_of_units  as units
 # Light Table stuff
 from sim_functions    import make_init_file
 from sim_functions    import make_config_file
-from sim_functions    import run_sim
+from sim_functions    import run_sims
 from sim_functions    import get_num_photons
 
 from table_functions  import get_table_positions
@@ -44,10 +44,10 @@ VALID_SIGNAL_TYPES = ["S1", "S2"]
 #################### SETTINGS ####################
 
 RUN_SIMULATIONS = False
-GENERATE_TABLE  = True
+GENERATE_TABLE  = False
 
 # DETECTOR NAME
-det_name = "NEXT_FLEX"
+det_name = "NEXT100"
 assert det_name in VALID_DETECTORS, "Wrong Geometry"
 
 # TABLE TYPE
@@ -55,7 +55,7 @@ table_type = "energy"
 assert table_type in VALID_TABLE_TYPES, "Wrong Table Type"
 
 # SIGNAL TYPE
-signal_type = "S1"
+signal_type = "S2"
 assert signal_type in VALID_SIGNAL_TYPES, "Wrong Signal Type"
 
 # SENSOR NAME
@@ -65,7 +65,7 @@ sensor_name = "PmtR11410"
 #sensor_name = "TP_SiPM"
 
 # TABLE PITCH
-#pitch = (20.0 * units.mm, 20.0 * units.mm, 20.0 * units.mm)
+pitch = (20.0 * units.mm, 20.0 * units.mm, 20.0 * units.mm)
 #pitch = (1.0 * units.mm, 1.0 * units.mm, 1.0 * units.mm)
 
 if((table_type == "tracking") and (pitch[2] > 2.0 * units.mm)):
@@ -73,6 +73,9 @@ if((table_type == "tracking") and (pitch[2] > 2.0 * units.mm)):
 
 # PHOTONS / POINT
 photons_per_point = 1000000
+
+# POINTS / JOB
+points_per_job = 1
 
 
 
@@ -90,6 +93,12 @@ if photons_per_event > MAX_PHOTONS_PER_EVT:
     
 ### Getting Table positions
 table_positions = get_table_positions(det_name, table_type, signal_type, pitch)
+num_points = len(table_positions)
+
+
+### Getting Num of jobs
+num_jobs = ceil(num_points / points_per_job)
+photons_per_job = points_per_job * photons_per_point
 
 
 ### Getting PATHS
@@ -103,47 +112,67 @@ if VERBOSITY:
     print(f"*** Pitch: {pitch} mm")
     print(f"*** Photons/Point = {photons_per_point:.1e} splitted into ...")
     print(f"***    {events_per_point} Events/Point x {photons_per_event:.1e} Photons/Event")
-    print(f"*** Total number of points:{len(table_positions)}")
+    print(f"*** Total number of points: {num_points:6}")
+    #print(table_positions)
+    print(f"*** Total number of jobs:   {num_jobs:6}")
+    print(f"*** Photons/Job: {photons_per_job}  ->  {photons_per_job/60.e4:.3} minutes/job (@ Harvard)")
     print(f"*** Config PATH: {config_path}")
     print(f"*** Log    PATH: {log_path}")
     print(f"*** Dst    PATH: {dst_path}")
     print(f"*** Table  PATH: {table_path}")
-    
+
+
+### Checks
+assert num_jobs < 10000, "Number of jobs too high"
+assert (photons_per_job/1.e4) < 12*60*60, "Jobs larger than half day"
+
 
 
 #################### RUNNING SIMULATIONS ####################
 
 if RUN_SIMULATIONS:
 
-    print("\n*** Running Light Simulations ...")
+    print(f"\n*** Running {num_points} Light Simulations ...\n")
 
-    for pos in table_positions:
+    for job_id in range(num_jobs):
         
-        # file names
-        init_fname, config_fname, log_fname, dst_fname = get_fnames(det_name ,pos)
+        # fnames to be run in current job
+        init_fnames = []
+        log_fnames  = []
+        
+        # Identifing current job positions
+        ini_pos_id = job_id * points_per_job
+        for pos in table_positions[ini_pos_id : ini_pos_id + points_per_job]:
+            print(f"* Position {pos} - {photons_per_point} photons")
+            
+            # file names
+            init_fname, config_fname, log_fname, dst_fname = get_fnames(det_name ,pos)
 
-        # make configuration files
-        make_init_file(det_name, init_fname, config_fname)
+            # Check if the sim is already run with the correct num_photons
+            if os.path.isfile(dst_fname + '.h5'):
+                if (get_num_photons(dst_fname + '.h5') >= photons_per_point):
+                    print("  Simulation run previously, so skipping ...")
+                    continue
+                else:
+                    print("  Simulation run previously with less events, so re-running ...")
 
-        make_config_file(det_name, config_fname, dst_fname,
-                         pos[0], pos[1], pos[2],
-                         photons_per_event)
-        
-        # Runing the simulation
-        if VERBOSITY:
-            print(f"\n* Runing {det_name} sim of {photons_per_point:.1e} photons from {pos} ...")
-        
-        # Check if the sim is already run with the correct num_photons
-        if os.path.isfile(dst_fname + '.h5'):
-            run_photons = get_num_photons(dst_fname + '.h5')
-            if (get_num_photons(dst_fname + '.h5') < photons_per_point):
-                print("  Simulation already run previously with less events, so re-running ...")
-                run_sim(init_fname, log_fname, events_per_point)
-            else:
-                print("  Simulation already run previously, so skipping ...")
-    
+            # Preparing this position to be simulated
+            make_init_file(det_name, init_fname, config_fname)
+            
+            make_config_file(det_name, config_fname, dst_fname,
+                             pos[0], pos[1], pos[2],
+                             photons_per_event)
+            
+            # Adding file names to be run
+            init_fnames += [init_fname]
+            log_fnames  += [log_fname]
+            
+        # Launching simulation job
+        if(len(init_fnames)):
+            print(f"* Submitting job {job_id} with {len(init_fnames)} points\n")
+            run_sims(init_fnames, log_fnames, events_per_point)
         else:
-            run_sim(init_fname, log_fname, events_per_point)
+            print(f"* Job {job_id} with no points, so skipped\n")
 
 
 
@@ -178,7 +207,7 @@ if GENERATE_TABLE:
                       ['photons_per_point',    str(photons_per_point)],
                       ['photons_per_event',    str(photons_per_event)],
                       ['events_per_point',     str(events_per_point)],
-                      ['total_points',         str(len(table_positions))],
+                      ['total_points',         str(num_points)],
                       ['table_path',           table_path],
                       ['dst_path',             dst_path],
                       ['config_path',          config_path],

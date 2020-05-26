@@ -2,7 +2,8 @@ import sys
 import os
 import subprocess
 
-import pandas as pd
+import pandas     as pd
+from   typing import List
 
 # Specific LightTable stuff
 from general_functions import get_host_name
@@ -94,7 +95,7 @@ def make_config_file(det_name     : str,
 
 
 ###
-def get_num_photons(dst_fname):
+def get_num_photons(dst_fname : str) -> int:
     mcConfig = pd.read_hdf(dst_fname, 'MC/configuration')
     mcConfig.set_index("param_key", inplace = True)
     try :
@@ -110,8 +111,8 @@ def get_num_photons(dst_fname):
 ###
 def make_majorana_script(script_fname : str,
                          exe_path     : str,
-                         init_fname   : str,
-                         log_fname    : str,
+                         init_fnames  : List[str],
+                         log_fnames   : List[str],
                          num_evts     : int
                         )            -> None :
     
@@ -126,7 +127,8 @@ def make_majorana_script(script_fname : str,
     content += f"source $HOME/.bashrc\n"
     content += f"source $HOME/.setNEXUS2\n"
 
-    content += f"{exe_path}nexus -b {init_fname} -n {num_evts} > {log_fname}\n"
+    for i in range(len(init_fnames)):
+        content += f"{exe_path}nexus -b {init_fnames[i]} -n {num_evts} > {log_fnames[i]}\n"
 
     script_file = open(script_fname, 'w')
     script_file.write(content)
@@ -137,15 +139,15 @@ def make_majorana_script(script_fname : str,
 ###
 def make_harvard_script(script_fname : str,
                         exe_path     : str,
-                        init_fname   : str,
-                        log_fname    : str,
+                        init_fnames  : List[str],
+                        log_fnames   : List[str],
                         num_evts     : int
                        )            -> None :
     content = f"#!/bin/bash\n"
 
     content += f"#SBATCH -n 1               # Number of cores requested\n"
     content += f"#SBATCH -N 1               # Ensure that all cores are on one machine\n"
-    content += f"#SBATCH -t 150             # Runtime in minutes\n"
+    content += f"#SBATCH -t 750             # Runtime in minutes\n"
     content += f"#SBATCH -p guenette        # Partition to submit to\n"
     content += f"#SBATCH --mem=1500         # Memory per cpu in MB (see also –mem-per-cpu)\n"
     content += f"#SBATCH -o tmp/%j.out      # Standard out goes to this file\n"
@@ -154,7 +156,8 @@ def make_harvard_script(script_fname : str,
     content += f"source /n/home11/jmunozv/.bashrc\n"
     content += f"source /n/home11/jmunozv/.setNEXUS\n"
 
-    content += f"{exe_path}nexus -b {init_fname} -n {num_evts} > {log_fname}\n"
+    for i in range(len(init_fnames)):
+        content += f"{exe_path}nexus -b {init_fnames[i]} -n {num_evts} > {log_fnames[i]}\n"
 
     script_file = open(script_fname, 'w')
     script_file.write(content)
@@ -163,19 +166,22 @@ def make_harvard_script(script_fname : str,
 
 
 ###
-def run_sim(init_fname : str,
-            log_fname  : str,
-            num_evts   : int
-           )          -> None :
+def run_sims(init_fnames : List[str],
+             log_fnames  : List[str],
+             num_evts    : int
+            )           -> None :
 
     # Getting local host
     host = get_host_name()
 
     ## Runing locally
     if host == "local":
+        # Locally only 1 point per job, so check
+        assert len(init_fnames) == 1, "When running locally, points_per_job MUST BE 1"
+        
         #exe_path = "/Users/Javi/Development/nexus/bin/"
         exe_path = "/Users/Javi/Development/nexus/"
-        inst = [exe_path + "nexus", "-b", init_fname, "-n", str(num_evts), ">", log_fname]
+        inst = [exe_path + "nexus", "-b", init_fnames[0], "-n", str(num_evts), ">", log_fnames[0]]
         
         #os.system("source /Users/Javi/.profile")
         #os.system("source /Users/Javi/.setNEXUS")
@@ -187,7 +193,7 @@ def run_sim(init_fname : str,
     elif host == "majorana":
         script_fname = "sim.script"
         exe_path = "/home/jmunoz/Development/nexus/bin/"
-        make_majorana_script(script_fname, exe_path, init_fname, log_fname, num_evts)
+        make_majorana_script(script_fname, exe_path, init_fnames, log_fnames, num_evts)
         
         os.system(f"qsub -N tst {script_fname}")
     
@@ -196,7 +202,7 @@ def run_sim(init_fname : str,
     elif host == "harvard":
         script_fname = "sim.slurm"
         exe_path = "/n/holystore01/LABS/guenette_lab/Users/jmunozv/Development/nexus/bin/"
-        make_harvard_script(script_fname, exe_path, init_fname, log_fname, num_evts)
+        make_harvard_script(script_fname, exe_path, init_fnames, log_fnames, num_evts)
         
         os.system(f"sbatch {script_fname}")
     
