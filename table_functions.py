@@ -163,7 +163,7 @@ def get_tracking_table_positions(det_name    : str,
                                  pitch       : Tuple[float, float, float]
                                 )           -> List[Tuple[float, float, float]] :
     
-    MAX_DIST = int(100 * units.mm)
+    MAX_DIST = int(150 * units.mm)
     
     # Getting detector dimensions
     det_dim = get_detector_dimensions(det_name)

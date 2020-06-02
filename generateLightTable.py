@@ -47,11 +47,11 @@ RUN_SIMULATIONS = False
 GENERATE_TABLE  = False
 
 # DETECTOR NAME
-det_name = "NEXT100"
+det_name = "NEXT_FLEX"
 assert det_name in VALID_DETECTORS, "Wrong Geometry"
 
 # TABLE TYPE
-table_type = "energy"
+table_type = "tracking"
 assert table_type in VALID_TABLE_TYPES, "Wrong Table Type"
 
 # SIGNAL TYPE
@@ -60,19 +60,20 @@ assert signal_type in VALID_SIGNAL_TYPES, "Wrong Signal Type"
 
 # SENSOR NAME
 # Typically PmtR11410 for energy tables and SiPM for tracking ones
-sensor_name = "PmtR11410"
+#sensor_name = "PmtR11410"
 #sensor_name = "SiPM"
-#sensor_name = "TP_SiPM"
+sensor_name = "TP_SiPM"
 
 # TABLE PITCH
-pitch = (20.0 * units.mm, 20.0 * units.mm, 20.0 * units.mm)
+#pitch = (20.0 * units.mm, 20.0 * units.mm, 20.0 * units.mm)
 #pitch = (1.0 * units.mm, 1.0 * units.mm, 1.0 * units.mm)
+pitch = (15.0 * units.mm, 15.0 * units.mm, 5.0 * units.mm)
 
 if((table_type == "tracking") and (pitch[2] > 2.0 * units.mm)):
     print("\n#### WARNING #### - Pitch Z unusually big.")
 
 # PHOTONS / POINT
-photons_per_point = 1000000
+photons_per_point = 10000000
 
 # POINTS / JOB
 points_per_job = 1
