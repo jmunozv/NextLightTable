@@ -104,7 +104,7 @@ def get_num_photons(dst_fname : str) -> int:
         return num_events * num_photons_event
     except KeyError:
         print("  No 'nphotons' info in the config table.")
-        return 20000000
+        exit(0)
 
 
 
