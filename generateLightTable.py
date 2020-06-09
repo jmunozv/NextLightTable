@@ -4,6 +4,8 @@ This SCRIPT generates Light Tables for a given geometry.
 
 # General Importings
 import os
+import sys
+import json
 import pandas as pd
 
 from math import ceil
@@ -42,41 +44,39 @@ VALID_SIGNAL_TYPES = ["S1", "S2"]
 
 
 #################### SETTINGS ####################
+try:
+    config_fname = sys.argv[1]
+except IndexError:
+    print("\nUsage: python generateLightTable.py config_file.json\n")
+    sys.exit()
 
-RUN_SIMULATIONS = False
-GENERATE_TABLE  = False
+with open(config_fname) as config_file:
+    config_data = json.load(config_file)
 
-# DETECTOR NAME
-det_name = "NEXT_FLEX"
-assert det_name in VALID_DETECTORS, "Wrong Geometry"
+# Step Selection
+RUN_SIMULATIONS = config_data["RUN_SIMULATIONS"]
+GENERATE_TABLE  = config_data["GENERATE_TABLE"]
 
-# TABLE TYPE
-table_type = "tracking"
+# Table Setting
+det_name = config_data["det_name"]
+assert det_name in VALID_DETECTORS, "Wrong Detector"
+
+table_type = config_data["table_type"]
 assert table_type in VALID_TABLE_TYPES, "Wrong Table Type"
 
-# SIGNAL TYPE
-signal_type = "S2"
+signal_type = config_data["signal_type"]
 assert signal_type in VALID_SIGNAL_TYPES, "Wrong Signal Type"
 
-# SENSOR NAME
-# Typically PmtR11410 for energy tables and SiPM for tracking ones
-#sensor_name = "PmtR11410"
-#sensor_name = "SiPM"
-sensor_name = "TP_SiPM"
+sensor_name = config_data["sensor_name"]
 
-# TABLE PITCH
-#pitch = (20.0 * units.mm, 20.0 * units.mm, 20.0 * units.mm)
-#pitch = (1.0 * units.mm, 1.0 * units.mm, 1.0 * units.mm)
-pitch = (15.0 * units.mm, 15.0 * units.mm, 5.0 * units.mm)
-
+pitch = tuple(config_data['pitch'])
 if((table_type == "tracking") and (pitch[2] > 2.0 * units.mm)):
     print("\n#### WARNING #### - Pitch Z unusually big.")
 
-# PHOTONS / POINT
-photons_per_point = 10000000
+photons_per_point = config_data["photons_per_point"]
 
-# POINTS / JOB
-points_per_job = 1
+#
+points_per_job = config_data["points_per_job"]
 
 
 

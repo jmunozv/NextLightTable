@@ -1,0 +1,15 @@
+{
+    "RUN_SIMULATIONS"   : false,
+    "GENERATE_TABLE"    : false,
+
+    "det_name"          : "NEXT_NEW",
+    "table_type"        : "energy",
+    "signal_type"       : "S2",
+    "sensor_name"       : "PmtR11410",
+    "pitch"             : [20.0, 20.0, 40.0],
+
+    "photons_per_point" : 100000,
+    "points_per_job"    : 1,
+
+    "VERBOSITY"         : true
+}
