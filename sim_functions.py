@@ -147,7 +147,7 @@ def make_harvard_script(script_fname : str,
 
     content += f"#SBATCH -n 1               # Number of cores requested\n"
     content += f"#SBATCH -N 1               # Ensure that all cores are on one machine\n"
-    content += f"#SBATCH -t 750             # Runtime in minutes\n"
+    content += f"#SBATCH -t 1500            # Runtime in minutes\n"
     content += f"#SBATCH -p guenette        # Partition to submit to\n"
     content += f"#SBATCH --mem=1500         # Memory per cpu in MB (see also –mem-per-cpu)\n"
     content += f"#SBATCH -o tmp/%j.out      # Standard out goes to this file\n"
@@ -179,8 +179,7 @@ def run_sims(init_fnames : List[str],
         # Locally only 1 point per job, so check
         assert len(init_fnames) == 1, "When running locally, points_per_job MUST BE 1"
         
-        #exe_path = "/Users/Javi/Development/nexus/bin/"
-        exe_path = "/Users/Javi/Development/nexus/"
+        exe_path = "/Users/Javi/Development/nexus/bin/"
         inst = [exe_path + "nexus", "-b", init_fnames[0], "-n", str(num_evts), ">", log_fnames[0]]
         
         #os.system("source /Users/Javi/.profile")

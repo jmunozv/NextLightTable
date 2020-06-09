@@ -2,7 +2,7 @@
 /Geometry/RegisterGeometry {det_name}
 
 # GENERATOR
-/Generator/RegisterGenerator    SCINTGENERATOR
+/Generator/RegisterGenerator    SCINTILLATION
 
 # ACTIONS
 /Actions/RegisterRunAction      DEFAULT

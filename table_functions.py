@@ -11,10 +11,10 @@ from math   import sqrt
 
 # Specific IC stuff
 import invisible_cities.core.system_of_units  as units
-
 from invisible_cities.io.mcinfo_io        import load_mcsensor_response_df
 from invisible_cities.io.mcinfo_io        import get_sensor_types
 
+# Specific LightTable stuff
 from sim_functions     import get_num_photons
 from general_functions import get_host_name
 
@@ -163,7 +163,7 @@ def get_tracking_table_positions(det_name    : str,
                                  pitch       : Tuple[float, float, float]
                                 )           -> List[Tuple[float, float, float]] :
     
-    MAX_DIST = int(150 * units.mm)
+    MAX_DIST = int(200 * units.mm)
     
     # Getting detector dimensions
     det_dim = get_detector_dimensions(det_name)
@@ -217,7 +217,7 @@ def build_energy_table(det_name, signal_type, sensor_name, pitch):
 
     sensor_ids = sensor_types[sensor_types.sensor_name == sensor_name].sensor_id.tolist()
     sensor_ids.sort()
-    
+
     light_table_columns = np.append(['x', 'y', 'z'], np.append(sensor_ids, 'total'))
     light_table_data    = []
     
@@ -238,7 +238,8 @@ def build_energy_table(det_name, signal_type, sensor_name, pitch):
             print(f"  Simulation run with {num_photons:9} initial photons.")
 
             # Getting the sensor response of the sns_type requested
-            sns_response = load_mcsensor_response_df(dst_fname, sns_name = sensor_name)
+            sns_response = load_mcsensor_response_df(dst_fname)
+            sns_response = sns_response.loc[pd.IndexSlice[:,sensor_ids], :]
             sns_charge   = sns_response.groupby('sensor_id').charge.sum().tolist()
             sns_charge   = np.divide(sns_charge, num_photons)
             sns_charge   = np.append(sns_charge, sum(sns_charge))
@@ -290,7 +291,7 @@ def build_tracking_table(det_name, signal_type, sensor_name, pitch):
     zs       = list(set((pos[2] - pitch_z/2.) for pos in table_positions))
     dist_xys.sort()
     zs      .sort(reverse=True)
-    
+
     light_table_columns = ['dist_xy'] + ['z_m' + str(int(-z)) for z in zs]
     light_table_probs   = np.zeros((len(dist_xys), len(zs)))
 
@@ -314,7 +315,7 @@ def build_tracking_table(det_name, signal_type, sensor_name, pitch):
             print(f"  Simulation run with {num_photons:9} initial photons.")
 
             # Getting the sensor response of the sns_type requested
-            sns_response = load_mcsensor_response_df(dst_fname, sns_name = sensor_name)
+            sns_response = load_mcsensor_response_df(dst_fname)
             try:
                 sns_charge   = sns_response.loc[pd.IndexSlice[:, sns_id], 'charge'].sum()
             except KeyError:
@@ -329,6 +330,7 @@ def build_tracking_table(det_name, signal_type, sensor_name, pitch):
             print(f"  WARNING: {dst_fname} NOT exist.")
 
     # Building the LightTable DataFrame
+    dist_xys = [round(dist,1) for dist in dist_xys] # Taking just one decimal for the index
     light_table_data = np.c_[dist_xys, light_table_probs]
     light_table = pd.DataFrame(light_table_data, columns = light_table_columns)
     light_table.set_index("dist_xy", inplace = True)
