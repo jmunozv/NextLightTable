@@ -132,7 +132,8 @@ def get_energy_table_positions(det_name    : str,
     det_dim = get_detector_dimensions(det_name)
     det_rad = int(det_dim["ACTIVE_radius"])
     det_len = int(det_dim["ACTIVE_length"])
-    
+    det_el  = int(det_dim["EL_gap"])
+
     # Getting table pitch
     pitch_x = int(pitch[0])
     pitch_y = int(pitch[1])
@@ -142,12 +143,12 @@ def get_energy_table_positions(det_name    : str,
     positions = []
     for i in range(-det_rad, det_rad, pitch_x):
         for j in range(-det_rad, det_rad, pitch_y):
-            # Checking if corrent point fits into ACTIVE
+            # Checking if current point fits into ACTIVE
             pos_rad = sqrt(i**2 + j**2)
             if (pos_rad < det_rad):
-                # Generating S2 table
+                # Generating S2 table (from the center of the EL gap)
                 if signal_type == "S2":
-                    positions.append((i, j, 0))
+                    positions.append((i, j, -det_el/2.))
                 
                 # Generating S1 table
                 else:
