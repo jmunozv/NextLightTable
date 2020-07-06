@@ -28,6 +28,7 @@ def get_detector_dimensions(det_name : str
         'NEXT_NEW': {
             'ACTIVE_radius' : 208.0 * units.mm,
             'ACTIVE_length' : 532.0 * units.mm,
+            'BUFFER_length' : 129.9 * units.mm,
             'EL_gap'        :   6.0 * units.mm,
             'ref_sensor'    : (17018, (25.0, 25.0))   # Reference sensor (id, (x,y))
         },
@@ -35,6 +36,7 @@ def get_detector_dimensions(det_name : str
         'NEXT100': {
             'ACTIVE_radius' :  492.0  * units.mm,
             'ACTIVE_length' : 1204.95 * units.mm,
+            'BUFFER_length' :  254.6  * units.mm,
             'EL_gap'        :   10.0  * units.mm,
             'ref_sensor'    : (33000, (7.83, 7.83))   # Reference sensor (id, (x,y))
         },
@@ -42,6 +44,7 @@ def get_detector_dimensions(det_name : str
         'NEXT_FLEX': {
             'ACTIVE_radius' :  492.0  * units.mm,
             'ACTIVE_length' : 1204.95 * units.mm,
+            'BUFFER_length' :  254.6  * units.mm,
             'EL_gap'        :   10.0  * units.mm,
             'ref_sensor'    : (2564, (5.6, 5.6))   # Reference sensor (id, (x,y))
         }
@@ -131,7 +134,7 @@ def get_energy_table_positions(det_name    : str,
     # Getting detector dimensions
     det_dim = get_detector_dimensions(det_name)
     det_rad = int(det_dim["ACTIVE_radius"])
-    det_len = int(det_dim["ACTIVE_length"])
+    det_len = int(det_dim["ACTIVE_length"] + det_dim["BUFFER_length"])
     det_el  = int(det_dim["EL_gap"])
 
     # Getting table pitch
@@ -141,19 +144,19 @@ def get_energy_table_positions(det_name    : str,
     
     # Generating positions
     positions = []
-    for i in range(-det_rad, det_rad, pitch_x):
-        for j in range(-det_rad, det_rad, pitch_y):
+    for x in range(-det_rad, det_rad, pitch_x):
+        for y in range(-det_rad, det_rad, pitch_y):
             # Checking if current point fits into ACTIVE
-            pos_rad = sqrt(i**2 + j**2)
+            pos_rad = sqrt(x**2 + y**2)
             if (pos_rad < det_rad):
                 # Generating S2 table (from the center of the EL gap)
                 if signal_type == "S2":
-                    positions.append((i, j, -det_el/2.))
+                    positions.append((x, y, -det_el/2.))
                 
                 # Generating S1 table
                 else:
-                    for k in range(0, det_len, pitch_z):
-                        positions.append((i, j, k))
+                    for z in range(0, det_len, pitch_z):
+                        positions.append((x, y, z))
             
     return positions
 
