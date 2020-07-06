@@ -125,8 +125,9 @@ if VERBOSITY:
 
 ### Checks
 assert num_jobs < 10000, "Number of jobs too high"
-assert (photons_per_job/1.e4) < 12*60*60, "Jobs larger than half day"
-
+#assert (photons_per_job/1.e4) < 12*60*60, "Jobs larger than half day"
+if ((photons_per_job/1.e4) > 24*60*60):
+    print("\n*** WARNING: Jobs larger than 24 hours.\n")
 
 
 #################### RUNNING SIMULATIONS ####################
