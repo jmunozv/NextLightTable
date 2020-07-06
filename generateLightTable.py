@@ -115,7 +115,7 @@ if VERBOSITY:
     print(f"***    {events_per_point} Events/Point x {photons_per_event:.1e} Photons/Event")
     print(f"*** Total number of points: {num_points:6}")
     #print(table_positions)
-    print(f"*** Total number of jobs:   {num_jobs:6}")
+    print(f"*** Max. number of jobs:    {num_jobs:6}")
     print(f"*** Photons/Job: {photons_per_job}  ->  {photons_per_job/60.e4:.3} minutes/job (@ Harvard)")
     print(f"*** Config PATH: {config_path}")
     print(f"*** Log    PATH: {log_path}")
@@ -125,7 +125,7 @@ if VERBOSITY:
 
 ### Checks
 assert num_jobs < 10000, "Number of jobs too high"
-#assert (photons_per_job/1.e4) < 12*60*60, "Jobs larger than half day"
+#assert (photons_per_job/1.e4) < 24*60*60, "Jobs larger than 24 hours"
 if ((photons_per_job/1.e4) > 24*60*60):
     print("\n*** WARNING: Jobs larger than 24 hours.\n")
 
@@ -136,45 +136,49 @@ if RUN_SIMULATIONS:
 
     print(f"\n*** Running {num_points} Light Simulations ...\n")
 
-    for job_id in range(num_jobs):
-        
-        # fnames to be run in current job
-        init_fnames = []
-        log_fnames  = []
-        
-        # Identifing current job positions
-        ini_pos_id = job_id * points_per_job
-        for pos in table_positions[ini_pos_id : ini_pos_id + points_per_job]:
-            print(f"* Position {pos} - {photons_per_point} photons")
-            
-            # file names
-            init_fname, config_fname, log_fname, dst_fname = get_fnames(det_name ,pos)
+    init_fnames    = []
+    log_fnames     = []
+    job_id         = 0
 
-            # Check if the sim is already run with the correct num_photons
-            if os.path.isfile(dst_fname + '.h5'):
-                if (get_num_photons(dst_fname + '.h5') >= photons_per_point):
-                    print("  Simulation run previously, so skipping ...")
-                    continue
-                else:
-                    print("  Simulation run previously with less events, so re-running ...")
+    # For every position ...
+    for pos in table_positions:
+        print(f"* Position {pos} - {photons_per_point} photons")
 
-            # Preparing this position to be simulated
-            make_init_file(det_name, init_fname, config_fname)
-            
-            make_config_file(det_name, config_fname, dst_fname,
-                             pos[0], pos[1], pos[2],
-                             photons_per_event)
-            
-            # Adding file names to be run
-            init_fnames += [init_fname]
-            log_fnames  += [log_fname]
-            
+        # file names
+        init_fname, config_fname, log_fname, dst_fname = get_fnames(det_name ,pos)
+
+        # Check if the sim is already run with the correct num_photons
+        if os.path.isfile(dst_fname + '.h5'):
+            if (get_num_photons(dst_fname + '.h5') >= photons_per_point):
+                print("  Simulation run previously, so skipping ...")
+                continue
+            else:
+                print("  Simulation run previously with less events, so re-running ...")
+
+        # Preparing this position to be simulated
+        make_init_file(det_name, init_fname, config_fname)
+        
+        make_config_file(det_name, config_fname, dst_fname,
+                         pos[0], pos[1], pos[2],
+                         photons_per_event)
+        
+        # Adding file names to be run
+        init_fnames    += [init_fname]
+        log_fnames     += [log_fname]
+
         # Launching simulation job
-        if(len(init_fnames)):
+        if(len(init_fnames) == points_per_job):
             print(f"* Submitting job {job_id} with {len(init_fnames)} points\n")
             run_sims(init_fnames, log_fnames, events_per_point)
-        else:
-            print(f"* Job {job_id} with no points, so skipped\n")
+            job_id += 1
+            init_fnames    = []
+            log_fnames     = []
+
+    # Running last set of sims if needed.
+    if len(init_fnames):
+        print(f"* Submitting job {job_id} with {len(init_fnames)} points\n")
+        run_sims(init_fnames, log_fnames, events_per_point)
+
 
 
 
