@@ -96,15 +96,18 @@ def make_config_file(det_name     : str,
 
 ###
 def get_num_photons(dst_fname : str) -> int:
-    mcConfig = pd.read_hdf(dst_fname, 'MC/configuration')
-    mcConfig.set_index("param_key", inplace = True)
     try :
+        mcConfig = pd.read_hdf(dst_fname, 'MC/configuration')
+        mcConfig.set_index("param_key", inplace = True)
         num_photons_event = int(mcConfig.at["/Generator/ScintGenerator/nphotons" , "param_value"])
         num_events        = int(mcConfig.at["num_events" , "param_value"])
         return num_events * num_photons_event
     except KeyError:
         print("  No 'nphotons' info in the config table.")
-        exit(0)
+        return 0
+    except:
+        print("  File corrupted.")
+        return 0
 
 
 

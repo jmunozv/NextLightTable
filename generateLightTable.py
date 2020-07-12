@@ -149,10 +149,11 @@ if RUN_SIMULATIONS:
 
         # Check if the sim is already run with the correct num_photons
         if os.path.isfile(dst_fname + '.h5'):
-            if (get_num_photons(dst_fname + '.h5') >= photons_per_point):
+            prev_photons = get_num_photons(dst_fname + '.h5')
+            if prev_photons >= photons_per_point:
                 print("  Simulation run previously, so skipping ...")
                 continue
-            else:
+            elif prev_photons > 0:
                 print("  Simulation run previously with less events, so re-running ...")
 
         # Preparing this position to be simulated
