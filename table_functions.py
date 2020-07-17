@@ -1,56 +1,20 @@
 import os
 
-import numpy  as np
-import pandas as pd
-
-from typing import List
-from typing import Tuple
-from typing import Dict
-
-from math   import sqrt
+import numpy      as np
+import pandas     as pd
+from   typing import Tuple
 
 # Specific IC stuff
-import invisible_cities.core.system_of_units  as units
-from invisible_cities.io.mcinfo_io        import load_mcsensor_response_df
-from invisible_cities.io.mcinfo_io        import get_sensor_types
+from invisible_cities.io.mcinfo_io import load_mcsensor_response_df
+from invisible_cities.io.mcinfo_io import get_sensor_types
 
 # Specific LightTable stuff
 from sim_functions     import get_num_photons
 from general_functions import get_host_name
+from pos_functions     import get_energy_table_positions
+from pos_functions     import get_tracking_table_positions
 
-
-
-###
-# Ideally to be read from the DataBase if this info is stored there.
-def get_detector_dimensions(det_name : str
-                           )        -> Dict :
-    dimensions = {
-        'NEXT_NEW': {
-            'ACTIVE_radius' : 208.0 * units.mm,
-            'ACTIVE_length' : 532.0 * units.mm,
-            'BUFFER_length' : 129.9 * units.mm,
-            'EL_gap'        :   6.0 * units.mm,
-            'ref_sensor'    : (17018, (25.0, 25.0))   # Reference sensor (id, (x,y))
-        },
-
-        'NEXT100': {
-            'ACTIVE_radius' :  492.0  * units.mm,
-            'ACTIVE_length' : 1204.95 * units.mm,
-            'BUFFER_length' :  254.6  * units.mm,
-            'EL_gap'        :   10.0  * units.mm,
-            'ref_sensor'    : (33000, (7.83, 7.83))   # Reference sensor (id, (x,y))
-        },
-
-        'NEXT_FLEX': {
-            'ACTIVE_radius' :  492.0  * units.mm,
-            'ACTIVE_length' : 1204.95 * units.mm,
-            'BUFFER_length' :  254.6  * units.mm,
-            'EL_gap'        :   10.0  * units.mm,
-            'ref_sensor'    : (2564, (5.6, 5.6))   # Reference sensor (id, (x,y))
-        }
-    }
-    
-    return dimensions[det_name]
+from detectors         import get_detector_dimensions
 
 
 
@@ -125,88 +89,6 @@ def get_fnames(det_name : str,
 
 
 
-###
-def get_energy_table_positions(det_name    : str,
-                               signal_type : str,
-                               pitch       : Tuple[float, float, float]
-                              )           -> List[Tuple[float, float, float]] :
-    
-    # Getting detector dimensions
-    det_dim = get_detector_dimensions(det_name)
-    det_rad = int(det_dim["ACTIVE_radius"])
-    det_len = int(det_dim["ACTIVE_length"] + det_dim["BUFFER_length"])
-    det_el  = int(det_dim["EL_gap"])
-
-    # Getting table pitch
-    pitch_x = int(pitch[0])
-    pitch_y = int(pitch[1])
-    pitch_z = int(pitch[2])
-    
-    # Generating positions
-    positions = []
-    for x in range(-det_rad, det_rad, pitch_x):
-        for y in range(-det_rad, det_rad, pitch_y):
-            # Checking if current point fits into ACTIVE
-            pos_rad = sqrt(x**2 + y**2)
-            if (pos_rad < det_rad):
-                # Generating S2 table (from the center of the EL gap)
-                if signal_type == "S2":
-                    positions.append((x, y, -det_el/2.))
-                
-                # Generating S1 table
-                else:
-                    for z in range(0, det_len, pitch_z):
-                        positions.append((x, y, z))
-            
-    return positions
-
-
-
-###
-def get_tracking_table_positions(det_name    : str,
-                                 pitch       : Tuple[float, float, float]
-                                )           -> List[Tuple[float, float, float]] :
-    
-    MAX_DIST = int(200 * units.mm)
-    
-    # Getting detector dimensions
-    det_dim = get_detector_dimensions(det_name)
-    det_el  = int(det_dim["EL_gap"])
-
-    # Getting reference sensor
-    sns_id, sns_pos = det_dim["ref_sensor"]
-    sns_pos_x       = sns_pos[0]
-    sns_pos_y       = sns_pos[1]
-    
-    # Getting table pitch
-    pitch_x = int(pitch[0])
-    pitch_y = int(pitch[1])
-    pitch_z = int(pitch[2])
-    assert (pitch_x == pitch_y), "pitch_x must be equal to pitch_y for tracking tables"
-    assert (pitch_z <= det_el),  "pitch_z must be equal or lower to detector EL GAP"
-    
-    # Generating positions
-    positions = []
-    for dist_xy in range(0, MAX_DIST, pitch_x):
-        for z in np.arange(pitch_z/2., det_el, pitch_z):
-            positions.append((sns_pos_x + dist_xy, sns_pos_y, -z))
-
-    return positions
-
-
-
-###
-def get_table_positions(det_name    : str,
-                        table_type  : str,
-                        signal_type : str,
-                        pitch       : Tuple[float, float, float]
-                       )           -> List[Tuple[float, float, float]] :
-    
-    if table_type == "energy":
-        return get_energy_table_positions(det_name, signal_type, pitch)
-    
-    elif table_type == "tracking":
-        return get_tracking_table_positions(det_name, pitch)
 
 
 

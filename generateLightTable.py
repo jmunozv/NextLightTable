@@ -24,7 +24,8 @@ from table_functions  import get_working_paths
 from table_functions  import build_table
 from table_functions  import get_fnames
 from table_functions  import get_table_fname
-from table_functions  import get_detector_dimensions
+
+from detectors        import get_detector_dimensions
 
 
 
@@ -124,7 +125,10 @@ if VERBOSITY:
 
 
 ### Checks
-assert num_jobs < 10000, "Number of jobs too high"
+#assert num_jobs < 10000, "Number of jobs too high"
+if (num_jobs > 10000):
+    print("\n*** WARNING: Number of jobs too high.\n")
+
 #assert (photons_per_job/1.e4) < 24*60*60, "Jobs larger than 24 hours"
 if ((photons_per_job/1.e4) > 24*60*60):
     print("\n*** WARNING: Jobs larger than 24 hours.\n")
