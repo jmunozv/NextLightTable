@@ -17,7 +17,8 @@ def make_init_file(det_name     : str,
                    config_fname : str
                   )            -> None :
 
-    if (det_name == "NEXT100"): det_name += "_OPT" # XXX To be deleted asap
+    if   ("NEXT100" == det_name): det_name += "_OPT"         # XXX To be deleted asap
+    elif ("FLEX"    in det_name): det_name  = "NEXT_FLEX"
     params = locals()
 
     # Getting & formatting the template
@@ -43,9 +44,14 @@ def make_config_file(det_name     : str,
                     )            -> None :
 
     # Geometry Content
-    if   (det_name == "NEXT_NEW" ): template_file = 'templates/NEXT_NEW.geometry.config'
-    elif (det_name == "NEXT100"  ): template_file = 'templates/NEXT100.geometry.config'
-    elif (det_name == "NEXT_FLEX"): template_file = 'templates/NEXT_FLEX_Ala100.geometry.config'
+    if   (det_name == "NEXT_NEW"   ): template_file = 'templates/NEXT_NEW.geometry.config'
+    elif (det_name == "NEXT100"    ): template_file = 'templates/NEXT100.geometry.config'
+    elif (det_name == "NEXT_FLEX"  ): template_file = 'templates/NEXT_FLEX.geometry.config'
+    elif (det_name == "FLEX100"    ): template_file = 'templates/FLEX100.geometry.config'
+    elif (det_name == "FLEX100_M10"): template_file = 'templates/FLEX100_M10.geometry.config'
+    elif (det_name == "FLEX100_M12"): template_file = 'templates/FLEX100_M12.geometry.config'
+    elif (det_name == "FLEX100_7_3"): template_file = 'templates/FLEX100_7_3.geometry.config'
+    elif (det_name == "FLEX_NEW"   ): template_file = 'templates/FLEX_NEW.geometry.config'
     else:
         print(f"{det_name} is not a valid detector.")
         sys.exit()
@@ -54,9 +60,9 @@ def make_config_file(det_name     : str,
 
 
     # Detector String for parameters
-    if   (det_name == "NEXT_NEW" ): det_str = "NextNew"
-    elif (det_name == "NEXT100"  ): det_str = "Next100"
-    elif (det_name == "NEXT_FLEX"): det_str = "NextFlex"
+    if   ("NEXT_NEW" == det_name): det_str = "NextNew"
+    elif ("NEXT100"  == det_name): det_str = "Next100"
+    elif ("FLEX"     in det_name): det_str = "NextFlex"
     else:
         print(f"{det_name} is not a valid detector.")
         sys.exit()

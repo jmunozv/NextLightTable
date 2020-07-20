@@ -19,7 +19,8 @@ from sim_functions    import make_config_file
 from sim_functions    import run_sims
 from sim_functions    import get_num_photons
 
-from table_functions  import get_table_positions
+from pos_functions    import get_table_positions
+
 from table_functions  import get_working_paths
 from table_functions  import build_table
 from table_functions  import get_fnames
@@ -38,7 +39,8 @@ VERBOSITY = True
 MAX_PHOTONS_PER_EVT = 1000000
 
 # Valid options
-VALID_DETECTORS    = ["NEXT_NEW", "NEXT100", "NEXT_FLEX"]
+VALID_DETECTORS    = ["NEXT_NEW", "NEXT100", "NEXT_FLEX", "FLEX100",
+                      "FLEX100_7_3", "FLEX100_M10", "FLEX100_M12", "FLEX_NEW"]
 VALID_TABLE_TYPES  = ["energy", "tracking"]
 VALID_SIGNAL_TYPES = ["S1", "S2"]
 
