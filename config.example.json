@@ -7,6 +7,7 @@
     "signal_type"       : "S2",
     "sensor_name"       : "PmtR11410",
     "pitch"             : [20.0, 20.0, 40.0],
+    "tracking_maxDist"  : 200,
 
     "photons_per_point" : 100000,
     "points_per_job"    : 1,

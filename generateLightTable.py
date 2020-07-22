@@ -76,9 +76,11 @@ pitch = tuple(config_data['pitch'])
 if((table_type == "tracking") and (pitch[2] > 2.0 * units.mm)):
     print("\n#### WARNING #### - Pitch Z unusually big.")
 
+tracking_maxDist  = config_data["tracking_maxDist"]
+
 photons_per_point = config_data["photons_per_point"]
 
-#
+# 
 points_per_job = config_data["points_per_job"]
 
 
@@ -96,7 +98,7 @@ if photons_per_event > MAX_PHOTONS_PER_EVT:
 
     
 ### Getting Table positions
-table_positions = get_table_positions(det_name, table_type, signal_type, pitch)
+table_positions = get_table_positions(det_name, table_type, signal_type, pitch, tracking_maxDist)
 num_points = len(table_positions)
 
 
@@ -114,6 +116,7 @@ if VERBOSITY:
     print(f"\n***** Generating {det_name} Light Table  *****\n")
     print(f"*** Type: {table_type}  -  Signal: {signal_type}  -  Sensor: {sensor_name}")
     print(f"*** Pitch: {pitch} mm")
+    print(f"*** MaxDist of tracking tables: {tracking_maxDist} mm")    
     print(f"*** Photons/Point = {photons_per_point:.1e} splitted into ...")
     print(f"***    {events_per_point} Events/Point x {photons_per_event:.1e} Photons/Event")
     print(f"*** Total number of points: {num_points:6}")

@@ -11,17 +11,18 @@ import invisible_cities.core.system_of_units  as units
 
 
 ###
-def get_table_positions(det_name    : str,
-                        table_type  : str,
-                        signal_type : str,
-                        pitch       : Tuple[float, float, float]
-                       )           -> List[Tuple[float, float, float]] :
+def get_table_positions(det_name        : str,
+                        table_type      : str,
+                        signal_type     : str,
+                        pitch           : Tuple[float, float, float],
+                        tracking_maxDist: float
+                       )               -> List[Tuple[float, float, float]] :
     
     if table_type == "energy":
         return get_energy_table_positions(det_name, signal_type, pitch)
     
     elif table_type == "tracking":
-        return get_tracking_table_positions(det_name, pitch)
+        return get_tracking_table_positions(det_name, pitch, tracking_maxDist)
 
 
 
@@ -63,13 +64,11 @@ def get_energy_table_positions(det_name    : str,
 
 
 ###
-def get_tracking_table_positions(det_name    : str,
-                                 pitch       : Tuple[float, float, float]
-                                )           -> List[Tuple[float, float, float]] :
-    
-    #MAX_DIST = int(200 * units.mm)
-    MAX_DIST = int(50 * units.mm)
-    
+def get_tracking_table_positions(det_name        : str,
+                                 pitch           : Tuple[float, float, float],
+                                 tracking_maxDist: float
+                                )               -> List[Tuple[float, float, float]] :
+        
     # Getting detector dimensions
     det_dim = get_detector_dimensions(det_name)
     det_el  = int(det_dim["EL_gap"])
@@ -88,7 +87,7 @@ def get_tracking_table_positions(det_name    : str,
     
     # Generating positions
     positions = []
-    for dist_xy in range(0, MAX_DIST, pitch_x):
+    for dist_xy in range(0, tracking_maxDist, pitch_x):
         for z in np.arange(pitch_z/2., det_el, pitch_z):
             positions.append((sns_pos_x + dist_xy, sns_pos_y, -z))
 
