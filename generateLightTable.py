@@ -201,7 +201,7 @@ if GENERATE_TABLE:
                                                      signal_type, sensor_name)
     
     # Light Table
-    light_table = build_table(det_name, table_type, signal_type, sensor_name, pitch)
+    light_table = build_table(det_name, table_type, signal_type, sensor_name, pitch, tracking_maxDist)
     
     light_table.to_hdf(light_table_fname, '/LightTable', mode   = 'w',
                        format = 'table', data_columns = True)

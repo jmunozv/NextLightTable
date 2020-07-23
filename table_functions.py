@@ -161,9 +161,9 @@ def build_energy_table(det_name, signal_type, sensor_name, pitch):
 
 
 ###
-def build_tracking_table(det_name, signal_type, sensor_name, pitch):
+def build_tracking_table(det_name, signal_type, sensor_name, pitch, tracking_maxDist):
 
-    table_positions = get_tracking_table_positions(det_name, pitch)
+    table_positions = get_tracking_table_positions(det_name, pitch, tracking_maxDist)
 
     # Getting needed data
     det_dim         = get_detector_dimensions(det_name)
@@ -227,15 +227,16 @@ def build_tracking_table(det_name, signal_type, sensor_name, pitch):
 
 
 ###
-def build_table(det_name    : str,
-                table_type  : str,
-                signal_type : str,
-                sensor_name : str,
-                pitch       : Tuple[float, float, float]
-               )           -> pd.DataFrame :
+def build_table(det_name         : str,
+                table_type       : str,
+                signal_type      : str,
+                sensor_name      : str,
+                pitch            : Tuple[float, float, float],
+                tracking_maxDist : float
+               )                -> pd.DataFrame :
     
     if table_type == "energy":
         return build_energy_table(det_name, signal_type, sensor_name, pitch)
     
     elif table_type == "tracking":
-        return build_tracking_table(det_name, signal_type, sensor_name, pitch)
+        return build_tracking_table(det_name, signal_type, sensor_name, pitch, tracking_maxDist)
