@@ -25,20 +25,12 @@ def get_detector_dimensions(det_name : str
             'ref_sensor'    : (33000, (7.83, 7.83))   # Reference sensor (id, (x,y))
         },
 
-        'NEXT_FLEX': {
-            'ACTIVE_radius' :  492.0  * units.mm,
-            'ACTIVE_length' : 1204.95 * units.mm,
-            'BUFFER_length' :  254.6  * units.mm,
-            'EL_gap'        :   10.0  * units.mm,
-            'ref_sensor'    : (2564, (5.6, 5.6))   # Reference sensor (id, (x,y))
-        },
-
         'FLEX100': {
             'ACTIVE_radius' :  492.0  * units.mm,
             'ACTIVE_length' : 1204.95 * units.mm,
             'BUFFER_length' :  254.6  * units.mm,
             'EL_gap'        :   10.0  * units.mm,
-            'ref_sensor'    : (2564, (5.6, 5.6))   # Reference sensor (id, (x,y))
+            'ref_sensor'    : (2546, (0.0, 0.0))   # Reference sensor (id, (x,y))
         },
 
         'FLEX100_M10': {
@@ -46,7 +38,7 @@ def get_detector_dimensions(det_name : str
             'ACTIVE_length' : 1204.95 * units.mm,
             'BUFFER_length' :  254.6  * units.mm,
             'EL_gap'        :   10.0  * units.mm,
-            'ref_sensor'    : (2564, (5.6, 5.6))   # Reference sensor (id, (x,y))
+            'ref_sensor'    : (2546, (0.0, 0.0))   # Reference sensor (id, (x,y))
         },
 
         'FLEX100_M12': {
@@ -54,7 +46,7 @@ def get_detector_dimensions(det_name : str
             'ACTIVE_length' : 1204.95 * units.mm,
             'BUFFER_length' :  254.6  * units.mm,
             'EL_gap'        :   10.0  * units.mm,
-            'ref_sensor'    : (2564, (5.6, 5.6))   # Reference sensor (id, (x,y))
+            'ref_sensor'    : (2546, (0.0, 0.0))   # Reference sensor (id, (x,y))
         },
 
         'FLEX100_7_3': {
@@ -62,7 +54,7 @@ def get_detector_dimensions(det_name : str
             'ACTIVE_length' : 1204.95 * units.mm,
             'BUFFER_length' :  254.6  * units.mm,
             'EL_gap'        :    7.0  * units.mm,
-            'ref_sensor'    : (2564, (5.6, 5.6))   # Reference sensor (id, (x,y))
+            'ref_sensor'    : (2546, (0.0, 0.0))   # Reference sensor (id, (x,y))
         },
 
         'FLEX_NEW': {
@@ -70,7 +62,7 @@ def get_detector_dimensions(det_name : str
             'ACTIVE_length' :  532.0  * units.mm,
             'BUFFER_length' :  129.9  * units.mm,
             'EL_gap'        :    6.0  * units.mm,
-            'ref_sensor'    : (1670, (2., 2.))   # Reference sensor (id, (x,y))
+            'ref_sensor'    : (1656, (0.0, 0.0))   # Reference sensor (id, (x,y))
         }
     }
     

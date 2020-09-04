@@ -39,8 +39,8 @@ VERBOSITY = True
 MAX_PHOTONS_PER_EVT = 1000000
 
 # Valid options
-VALID_DETECTORS    = ["NEXT_NEW", "NEXT100", "NEXT_FLEX", "FLEX100",
-                      "FLEX100_7_3", "FLEX100_M10", "FLEX100_M12", "FLEX_NEW"]
+VALID_DETECTORS    = ["NEXT_NEW", "NEXT100", "FLEX100", "FLEX100_7_3",
+                      "FLEX100_M10", "FLEX100_M12", "FLEX_NEW"]
 VALID_TABLE_TYPES  = ["energy", "tracking"]
 VALID_SIGNAL_TYPES = ["S1", "S2"]
 
@@ -118,7 +118,7 @@ if VERBOSITY:
     print(f"*** Pitch: {pitch} mm")
     print(f"*** MaxDist of tracking tables: {tracking_maxDist} mm")    
     print(f"*** Photons/Point = {photons_per_point:.1e} splitted into ...")
-    print(f"***    {events_per_point} Events/Point x {photons_per_event:.1e} Photons/Event")
+    print(f"***    {events_per_point} Events/Point * {photons_per_event:.1e} Photons/Event")
     print(f"*** Total number of points: {num_points:6}")
     #print(table_positions)
     print(f"*** Max. number of jobs:    {num_jobs:6}")
