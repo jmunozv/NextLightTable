@@ -4,6 +4,7 @@ import subprocess
 
 import pandas     as pd
 from   typing import List
+from   time   import sleep
 
 # Specific LightTable stuff
 from general_functions import get_host_name
@@ -208,10 +209,14 @@ def run_sims(init_fnames : List[str],
 
     ## Runing in HARVARD queue system
     elif host == "harvard":
+
+        # Limit the maximum number of jobt to run at the same time
+        while int(os.popen('squeue -u $USER | wc -l').read()) > 400:
+            sleep(30)
+
         script_fname = "sim.slurm"
         exe_path = "/n/holystore01/LABS/guenette_lab/Users/jmunozv/Development/nexus/bin/"
-        make_harvard_script(script_fname, exe_path, init_fnames, log_fnames, num_evts)
-        
+        make_harvard_script(script_fname, exe_path, init_fnames, log_fnames, num_evts)        
         os.system(f"sbatch {script_fname}")
     
 
