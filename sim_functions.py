@@ -45,20 +45,8 @@ def make_config_file(det_name     : str,
                     )            -> None :
 
     # Geometry Content
-    if   (det_name == "NEXT_NEW"   ): template_file = 'templates/NEXT_NEW.geometry.config'
-    elif (det_name == "NEXT100"    ): template_file = 'templates/NEXT100.geometry.config'
-    elif (det_name == "NEXT_FLEX"  ): template_file = 'templates/NEXT_FLEX.geometry.config'
-    elif (det_name == "FLEX100"    ): template_file = 'templates/FLEX100.geometry.config'
-    elif (det_name == "FLEX100_M10"): template_file = 'templates/FLEX100_M10.geometry.config'
-    elif (det_name == "FLEX100_M12"): template_file = 'templates/FLEX100_M12.geometry.config'
-    elif (det_name == "FLEX100_7_3"): template_file = 'templates/FLEX100_7_3.geometry.config'
-    elif (det_name == "FLEX_NEW"   ): template_file = 'templates/FLEX_NEW.geometry.config'
-    else:
-        print(f"{det_name} is not a valid detector.")
-        sys.exit()
-
+    template_file = f"templates/{det_name}.geometry.config"
     geometry_content = open(template_file).read()
-
 
     # Detector String for parameters
     if   ("NEXT_NEW" == det_name): det_str = "NextNew"

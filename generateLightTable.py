@@ -40,7 +40,8 @@ MAX_PHOTONS_PER_EVT = 1000000
 
 # Valid options
 VALID_DETECTORS    = ["NEXT_NEW", "NEXT100", "FLEX100", "FLEX100_7_3",
-                      "FLEX100_M10", "FLEX100_M12", "FLEX_NEW"]
+                      "FLEX100_M10", "FLEX100_M6_O6", "FLEX100_M12",
+                      "FLEX_NEW"]
 VALID_TABLE_TYPES  = ["energy", "tracking"]
 VALID_SIGNAL_TYPES = ["S1", "S2"]
 

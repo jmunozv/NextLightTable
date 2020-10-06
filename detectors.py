@@ -49,6 +49,14 @@ def get_detector_dimensions(det_name : str
             'ref_sensor'    : (2546, (0.0, 0.0))   # Reference sensor (id, (x,y))
         },
 
+        'FLEX100_M6_O6': {
+            'ACTIVE_radius' :  492.0  * units.mm,
+            'ACTIVE_length' : 1204.95 * units.mm,
+            'BUFFER_length' :  254.6  * units.mm,
+            'EL_gap'        :   10.0  * units.mm,
+            'ref_sensor'    : (2546, (0.0, 0.0))   # Reference sensor (id, (x,y))
+        },
+
         'FLEX100_7_3': {
             'ACTIVE_radius' :  492.0  * units.mm,
             'ACTIVE_length' : 1204.95 * units.mm,
