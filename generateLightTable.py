@@ -41,7 +41,7 @@ MAX_PHOTONS_PER_EVT = 1000000
 # Valid options
 VALID_DETECTORS    = ["NEXT_NEW", "NEXT100", "FLEX100", "FLEX100_7_3",
                       "FLEX100_M10", "FLEX100_M6_O6", "FLEX100_M12",
-                      "FLEX_NEW"]
+                      "FLEX_NEW", "TEST"]
 VALID_TABLE_TYPES  = ["energy", "tracking"]
 VALID_SIGNAL_TYPES = ["S1", "S2"]
 
@@ -147,6 +147,7 @@ if RUN_SIMULATIONS:
     print(f"\n*** Running {num_points} Light Simulations ...\n")
 
     init_fnames    = []
+    dst_fnames     = []
     log_fnames     = []
     job_id         = 0
 
@@ -174,21 +175,23 @@ if RUN_SIMULATIONS:
                          photons_per_event)
         
         # Adding file names to be run
-        init_fnames    += [init_fname]
-        log_fnames     += [log_fname]
+        init_fnames += [init_fname]
+        dst_fnames  += [dst_fname]
+        log_fnames  += [log_fname]
 
         # Launching simulation job
         if(len(init_fnames) == points_per_job):
             print(f"* Submitting job {job_id} with {len(init_fnames)} points\n")
-            run_sims(init_fnames, log_fnames, events_per_point)
+            run_sims(init_fnames, dst_fnames, log_fnames, events_per_point)
             job_id += 1
-            init_fnames    = []
-            log_fnames     = []
+            init_fnames = []
+            dst_fnames  = []
+            log_fnames  = []
 
     # Running last set of sims if needed.
     if len(init_fnames):
         print(f"* Submitting job {job_id} with {len(init_fnames)} points\n")
-        run_sims(init_fnames, log_fnames, events_per_point)
+        run_sims(init_fnames, dst_fnames, log_fnames, events_per_point)
 
 
 

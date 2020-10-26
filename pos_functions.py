@@ -6,8 +6,6 @@ from math   import sqrt
 
 from detectors import get_detector_dimensions
 
-import invisible_cities.core.system_of_units  as units
-
 
 
 ###
