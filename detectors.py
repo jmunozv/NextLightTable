@@ -17,6 +17,30 @@ def get_detector_dimensions(det_name : str
             'ref_sensor'    : (17018, (25.0, 25.0))   # Reference sensor (id, (x,y))
         },
 
+        'DEMOpp-Run5': {
+            'ACTIVE_radius' :   97.1  * units.mm,
+            'ACTIVE_length' :  309.55 * units.mm,
+            'BUFFER_length' :  117.85 * units.mm,
+            'EL_gap'        :    9.8  * units.mm,
+            'ref_sensor'    : (14000, (-5.0, 5.0))   # Reference sensor (id, (x,y))
+        },
+
+        'DEMOpp-Run7': {
+            'ACTIVE_radius' :   97.1  * units.mm,
+            'ACTIVE_length' :  309.55 * units.mm,
+            'BUFFER_length' :  117.85 * units.mm,
+            'EL_gap'        :    5.0  * units.mm,
+            'ref_sensor'    : (14000, (-5.0, 5.0))   # Reference sensor (id, (x,y))
+        },
+
+        'DEMOpp-Run8': {
+            'ACTIVE_radius' :   97.1  * units.mm,
+            'ACTIVE_length' :  309.55 * units.mm,
+            'BUFFER_length' :  117.85 * units.mm,
+            'EL_gap'        :    5.0  * units.mm,
+            'ref_sensor'    : (14000, (-5.0, 5.0))   # Reference sensor (id, (x,y))
+        },
+
         'NEXT100': {
             'ACTIVE_radius' :  492.0  * units.mm,
             'ACTIVE_length' : 1204.95 * units.mm,

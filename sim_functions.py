@@ -20,8 +20,9 @@ def make_init_file(det_name     : str,
                   )            -> None :
 
     if   ("NEXT100" == det_name): det_name += "_OPT"         # XXX To be deleted asap
+    elif ("DEMOpp"  in det_name): det_name  = "NEXT_DEMO"
     elif ("FLEX"    in det_name): det_name  = "NEXT_FLEX"
-    elif ("TEST"    ==  det_name): det_name  = "NEXT_FLEX"
+    elif ("TEST"    == det_name): det_name  = "NEXT_FLEX"
     params = locals()
 
     # Getting & formatting the template
@@ -55,6 +56,7 @@ def make_config_file(det_name     : str,
 
     # Detector String for parameters
     if   ("NEXT_NEW" == det_name): det_str = "NextNew"
+    elif ("DEMOpp"   in det_name): det_str = "NextDemo"
     elif ("NEXT100"  == det_name): det_str = "Next100"
     elif ("FLEX"     in det_name): det_str = "NextFlex"
     elif ("TEST"     == det_name): det_str = "NextFlex"
