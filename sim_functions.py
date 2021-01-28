@@ -75,9 +75,12 @@ def make_config_file(det_name     : str,
     content += f"/Generator/ScintGenerator/nphotons    {num_photons}\n"
 
     content +=  "### PHYSICS\n"
+    content +=  "/process/optical/scintillation/setTrackSecondariesFirst true\n"
+    content +=  "/process/optical/processActivation Cerenkov             false\n"
     content +=  "/PhysicsList/Nexus/clustering           true\n"
     content +=  "/PhysicsList/Nexus/drift                true\n"
     content +=  "/PhysicsList/Nexus/electroluminescence  true\n"
+    content +=  "/PhysicsList/Nexus/photoelectric        false\n"
 
     content +=  "### VERBOSITIES\n"
     content +=  "/control/verbose   0\n"
